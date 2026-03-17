@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>기업 인텔리전스 에이전트</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #C8A96E;
+    --gold-dim: rgba(200,169,110,0.15);
+    --gold-border: rgba(200,169,110,0.25);
+    --bg: #0e0c09;
+    --surface: rgba(255,255,255,0.03);
+    --text: #e8dcc8;
+    --muted: #6b5f4e;
+    --dim: #3a3028;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Serif KR', serif;
+    min-height: 100vh;
+  }
+  /* Grain overlay */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 0; opacity: 0.4;
+  }
+
+  .wrap { max-width: 900px; margin: 0 auto; padding: 48px 24px 80px; position: relative; z-index: 1; }
+
+  /* Header */
+  header { margin-bottom: 48px; }
+  .header-tag { font-family: 'DM Mono', monospace; font-size: 11px; color: #555; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 12px; }
+  h1 { font-size: clamp(28px, 5vw, 44px); font-weight: 300; color: var(--gold); letter-spacing: -0.02em; line-height: 1.1; margin-bottom: 10px; }
+  .subtitle { font-size: 14px; color: var(--muted); line-height: 1.7; }
+
+  /* Search */
+  .search-row { display: flex; gap: 10px; margin-bottom: 16px; }
+  .input-wrap {
+    flex: 1; display: flex; align-items: center; gap: 12;
+    background: var(--surface);
+    border: 1px solid var(--gold-border);
+    border-radius: 10px; padding: 0 18px;
+    transition: border-color 0.2s;
+  }
+  .input-wrap:focus-within { border-color: var(--gold); }
+  .input-wrap input {
+    flex: 1; background: none; border: none; outline: none;
+    font-size: 15px; color: var(--text); padding: 15px 0;
+    font-family: 'Noto Serif KR', serif;
+  }
+  .input-wrap input::placeholder { color: #4a4030; }
+  .search-icon { font-size: 16px; opacity: 0.6; flex-shrink: 0; }
+  button.btn-primary {
+    padding: 15px 28px; border-radius: 10px; border: none; cursor: pointer;
+    background: var(--gold); color: #1a1410;
+    font-weight: 700; font-size: 14px; font-family: 'DM Mono', monospace;
+    letter-spacing: 0.05em; transition: all 0.2s; white-space: nowrap;
+  }
+  button.btn-primary:hover { background: #d4b87a; }
+  button.btn-primary.loading { background: var(--gold-dim); color: var(--gold); }
+  button.btn-reset {
+    padding: 15px 20px; border-radius: 10px;
+    border: 1px solid var(--gold-border);
+    background: none; color: #888; cursor: pointer;
+    font-size: 13px; font-family: 'DM Mono', monospace;
+    transition: all 0.2s;
+  }
+  button.btn-reset:hover { color: var(--text); }
+
+  /* API Key input */
+  .apikey-wrap {
+    background: rgba(200,169,110,0.04);
+    border: 1px solid rgba(200,169,110,0.15);
+    border-radius: 10px; padding: 16px 20px;
+    margin-bottom: 24px;
+  }
+  .apikey-label { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); letter-spacing: 0.1em; margin-bottom: 8px; }
+  .apikey-row { display: flex; gap: 10px; align-items: center; }
+  .apikey-row input {
+    flex: 1; background: none; border: 1px solid var(--gold-border);
+    border-radius: 8px; padding: 10px 14px; color: var(--text);
+    font-family: 'DM Mono', monospace; font-size: 13px; outline: none;
+    transition: border-color 0.2s;
+  }
+  .apikey-row input:focus { border-color: var(--gold); }
+  .apikey-note { font-size: 11px; color: #4a4030; margin-top: 8px; line-height: 1.6; }
+  .apikey-note a { color: var(--gold); text-decoration: none; }
+
+  /* Chips */
+  .chips { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 40px; }
+  .chip {
+    padding: 7px 14px; border-radius: 20px;
+    border: 1px solid rgba(200,169,110,0.2);
+    background: rgba(200,169,110,0.04);
+    color: #7a6a50; cursor: pointer; font-size: 13px;
+    font-family: 'DM Mono', monospace; transition: all 0.2s;
+  }
+  .chip:hover { color: var(--gold); border-color: var(--gold-border); }
+
+  /* Progress */
+  .progress { padding: 40px 0; text-align: center; }
+  .progress-stages { display: flex; justify-content: center; gap: 40px; margin-bottom: 28px; }
+  .prog-stage { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .prog-dot {
+    width: 36px; height: 36px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700; font-family: 'DM Mono', monospace;
+    transition: all 0.4s;
+  }
+  .prog-dot.done { background: var(--gold); color: #1a1410; }
+  .prog-dot.active { background: var(--gold); color: #1a1410; box-shadow: 0 0 0 6px rgba(200,169,110,0.2); }
+  .prog-dot.waiting { background: var(--gold-dim); color: var(--gold); }
+  .prog-label { font-size: 11px; font-family: 'DM Mono', monospace; color: #555; }
+  .prog-label.active { color: var(--gold); }
+  .prog-bar-track { width: 200px; height: 2px; background: var(--gold-dim); margin: 0 auto; border-radius: 1px; }
+  .prog-bar-fill { height: 100%; background: var(--gold); border-radius: 1px; transition: width 0.6s ease; }
+
+  /* Result header */
+  .result-header { margin-bottom: 28px; padding-bottom: 24px; border-bottom: 1px solid rgba(200,169,110,0.1); }
+  .company-name { font-size: clamp(22px, 4vw, 32px); font-weight: 300; color: var(--text); margin-bottom: 8px; }
+  .ticker-badge {
+    display: inline-block; padding: 4px 12px;
+    background: var(--gold-dim); border: 1px solid var(--gold-border);
+    border-radius: 6px; font-size: 13px; color: var(--gold);
+    font-family: 'DM Mono', monospace; letter-spacing: 0.08em; margin-left: 12px;
+  }
+  .analysis-date { font-size: 12px; color: var(--dim); font-family: 'DM Mono', monospace; margin-top: 6px; }
+
+  /* Cards */
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
+  .card {
+    background: var(--surface);
+    border: 1px solid rgba(200,169,110,0.15);
+    border-radius: 12px; padding: 22px 24px;
+    opacity: 0; transform: translateY(16px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  .card.visible { opacity: 1; transform: translateY(0); }
+  .card-title { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .card-icon { font-size: 18px; }
+  .card-label { font-size: 12px; font-weight: 700; color: var(--gold); letter-spacing: 0.1em; font-family: 'DM Mono', monospace; }
+  .card-body { font-size: 14px; line-height: 1.9; color: #ccc; }
+
+  /* Error */
+  .error {
+    margin-top: 24px; padding: 20px;
+    background: rgba(200,80,60,0.08);
+    border: 1px solid rgba(200,80,60,0.2);
+    border-radius: 10px; color: #e07060; font-size: 14px; line-height: 1.7;
+  }
+
+  /* Disclaimer */
+  .disclaimer { margin-top: 32px; font-size: 11px; color: var(--dim); font-family: 'DM Mono', monospace; text-align: center; line-height: 1.7; }
+
+  @media (max-width: 600px) {
+    .cards { grid-template-columns: 1fr; }
+    .search-row { flex-wrap: wrap; }
+    button.btn-primary { width: 100%; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="header-tag">AI Agent v1.0</div>
+    <h1>기업 인텔리전스</h1>
+    <p class="subtitle">기업명을 입력하면 AI가 웹을 검색해 핵심 정보를 요약합니다</p>
+  </header>
+
+  <!-- API Key -->
+  <div class="apikey-wrap">
+    <div class="apikey-label">ANTHROPIC API KEY</div>
+    <div class="apikey-row">
+      <input type="password" id="apikey" placeholder="sk-ant-..." autocomplete="off">
+    </div>
+    <div class="apikey-note">
+      API 키는 브라우저 메모리에만 저장되며 어디에도 전송되지 않습니다.<br>
+      키가 없다면 <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a>에서 발급받으세요.
+    </div>
+  </div>
+
+  <!-- Search -->
+  <div class="search-row">
+    <div class="input-wrap">
+      <span class="search-icon">🔎</span>
+      <input type="text" id="query" placeholder="예: SK하이닉스, NVIDIA, 삼성전자..." />
+    </div>
+    <button class="btn-primary" id="btn-search" onclick="handleSearch()">분석</button>
+    <button class="btn-reset" id="btn-reset" style="display:none" onclick="handleReset()">새로 검색</button>
+  </div>
+
+  <div class="chips" id="chips">
+    <span class="chip" onclick="quickSearch('SK하이닉스')">SK하이닉스</span>
+    <span class="chip" onclick="quickSearch('NVIDIA')">NVIDIA</span>
+    <span class="chip" onclick="quickSearch('TSMC')">TSMC</span>
+    <span class="chip" onclick="quickSearch('삼성전자')">삼성전자</span>
+    <span class="chip" onclick="quickSearch('Micron')">Micron</span>
+  </div>
+
+  <!-- Progress -->
+  <div class="progress" id="progress" style="display:none">
+    <div class="progress-stages">
+      <div class="prog-stage">
+        <div class="prog-dot waiting" id="dot-0">1</div>
+        <div class="prog-label" id="lbl-0">검색 중</div>
+      </div>
+      <div class="prog-stage">
+        <div class="prog-dot waiting" id="dot-1">2</div>
+        <div class="prog-label" id="lbl-1">분석 중</div>
+      </div>
+      <div class="prog-stage">
+        <div class="prog-dot waiting" id="dot-2">3</div>
+        <div class="prog-label" id="lbl-2">정리 중</div>
+      </div>
+    </div>
+    <div class="prog-bar-track"><div class="prog-bar-fill" id="prog-fill" style="width:0%"></div></div>
+  </div>
+
+  <!-- Error -->
+  <div class="error" id="error" style="display:none"></div>
+
+  <!-- Result -->
+  <div id="result" style="display:none">
+    <div class="result-header">
+      <div>
+        <span class="company-name" id="res-name"></span>
+        <span class="ticker-badge" id="res-ticker" style="display:none"></span>
+      </div>
+      <div class="analysis-date" id="res-date"></div>
+    </div>
+    <div class="cards" id="cards"></div>
+    <div class="disclaimer">※ AI가 웹 검색으로 수집한 정보입니다. 투자 결정 전 반드시 공식 자료를 확인하세요.</div>
+  </div>
+</div>
+
+<script>
+const SECTIONS = [
+  { key: 'overview',     label: '기업 개요',      icon: '🏢' },
+  { key: 'financials',   label: '재무 현황',      icon: '📊' },
+  { key: 'products',     label: '주요 제품/서비스', icon: '⚙️' },
+  { key: 'news',         label: '최신 뉴스',      icon: '📰' },
+  { key: 'competitors',  label: '경쟁사 분석',    icon: '🔍' },
+  { key: 'outlook',      label: '투자 전망',      icon: '📈' },
+];
+
+const SYSTEM = `당신은 기업 분석 전문 AI 에이전트입니다. 웹 검색을 활용해 요청된 기업에 대한 정보를 수집하고, 아래 JSON 형식으로만 응답하세요. 절대 JSON 외의 텍스트를 출력하지 마세요.
+
+{
+  "companyName": "정식 기업명",
+  "ticker": "주식 티커 (없으면 null)",
+  "overview": "기업 개요 3~5문장. 설립연도, 본사 위치, 사업 영역 포함",
+  "financials": "최근 매출, 영업이익, 시가총액 등 주요 재무 지표 3~5문장",
+  "products": "주요 제품 또는 서비스 3~5문장",
+  "news": "최근 3~6개월 주요 뉴스 및 이슈 3~5문장",
+  "competitors": "주요 경쟁사 및 시장 내 포지션 3~5문장",
+  "outlook": "투자 관점에서의 리스크와 기회 요인 3~5문장"
+}`;
+
+let abortCtrl = null;
+let stageTimers = [];
+
+function setStage(stage) {
+  for (let i = 0; i < 3; i++) {
+    const dot = document.getElementById(`dot-${i}`);
+    const lbl = document.getElementById(`lbl-${i}`);
+    dot.className = 'prog-dot ' + (i < stage ? 'done' : i === stage ? 'active' : 'waiting');
+    dot.textContent = i < stage ? '✓' : i + 1;
+    lbl.className = 'prog-label' + (i === stage ? ' active' : '');
+  }
+  document.getElementById('prog-fill').style.width = `${(stage / 2) * 100}%`;
+}
+
+async function handleSearch() {
+  const apikey = document.getElementById('apikey').value.trim();
+  const query = document.getElementById('query').value.trim();
+  if (!apikey) { showError('API 키를 먼저 입력해주세요.'); return; }
+  if (!query) { showError('기업명을 입력해주세요.'); return; }
+
+  abortCtrl = new AbortController();
+  document.getElementById('btn-search').textContent = '중단';
+  document.getElementById('btn-search').onclick = handleStop;
+  document.getElementById('btn-search').classList.add('loading');
+  document.getElementById('chips').style.display = 'none';
+  document.getElementById('result').style.display = 'none';
+  document.getElementById('error').style.display = 'none';
+  document.getElementById('progress').style.display = 'block';
+  setStage(0);
+
+  stageTimers.push(setTimeout(() => setStage(1), 2000));
+  stageTimers.push(setTimeout(() => setStage(2), 4000));
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apikey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true',
+      },
+      signal: abortCtrl.signal,
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: SYSTEM,
+        tools: [{ type: 'web_search_20250305', name: 'web_search' }],
+        messages: [{ role: 'user', content: `"${query}" 기업에 대해 최신 정보를 검색하고 분석해주세요. 한국어로 작성하세요.` }],
+      }),
+    });
+    stageTimers.forEach(clearTimeout);
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err?.error?.message || `API 오류: ${res.status}`);
+    }
+
+    const data = await res.json();
+    const textBlock = data.content.find(b => b.type === 'text');
+    if (!textBlock) throw new Error('응답에서 텍스트를 찾을 수 없습니다.');
+    const clean = textBlock.text.replace(/```json|```/g, '').trim();
+    const parsed = JSON.parse(clean);
+    showResult(parsed);
+  } catch (e) {
+    stageTimers.forEach(clearTimeout);
+    if (e.name !== 'AbortError') showError(e.message);
+    else resetUI();
+  }
+}
+
+function handleStop() {
+  if (abortCtrl) abortCtrl.abort();
+  resetUI();
+}
+
+function handleReset() {
+  document.getElementById('result').style.display = 'none';
+  document.getElementById('error').style.display = 'none';
+  document.getElementById('chips').style.display = 'flex';
+  document.getElementById('btn-reset').style.display = 'none';
+  document.getElementById('query').value = '';
+  resetUI();
+}
+
+function resetUI() {
+  document.getElementById('progress').style.display = 'none';
+  document.getElementById('btn-search').textContent = '분석';
+  document.getElementById('btn-search').onclick = handleSearch;
+  document.getElementById('btn-search').classList.remove('loading');
+}
+
+function showError(msg) {
+  document.getElementById('progress').style.display = 'none';
+  const el = document.getElementById('error');
+  el.textContent = '⚠️ ' + msg;
+  el.style.display = 'block';
+  resetUI();
+}
+
+function showResult(data) {
+  document.getElementById('progress').style.display = 'none';
+  document.getElementById('res-name').textContent = data.companyName;
+  const ticker = document.getElementById('res-ticker');
+  if (data.ticker) { ticker.textContent = data.ticker; ticker.style.display = 'inline-block'; }
+  else ticker.style.display = 'none';
+  document.getElementById('res-date').textContent =
+    new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' }) + ' 기준 분석';
+
+  const container = document.getElementById('cards');
+  container.innerHTML = '';
+  SECTIONS.forEach((sec, i) => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `
+      <div class="card-title">
+        <span class="card-icon">${sec.icon}</span>
+        <span class="card-label">${sec.label.toUpperCase()}</span>
+      </div>
+      <div class="card-body">${data[sec.key] || '-'}</div>
+    `;
+    container.appendChild(card);
+    setTimeout(() => card.classList.add('visible'), i * 120);
+  });
+
+  document.getElementById('result').style.display = 'block';
+  document.getElementById('btn-reset').style.display = 'inline-block';
+  document.getElementById('chips').style.display = 'none';
+  resetUI();
+}
+
+function quickSearch(name) {
+  document.getElementById('query').value = name;
+  handleSearch();
+}
+
+document.getElementById('query').addEventListener('keydown', e => {
+  if (e.key === 'Enter') handleSearch();
+});
+</script>
+</body>
+</html>
