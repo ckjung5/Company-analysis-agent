@@ -20,7 +20,7 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
     background: var(--bg);
-    color: var(--text);
+    color: #ffffff;
     font-family: 'Noto Serif KR', serif;
     min-height: 100vh;
   }
@@ -52,10 +52,11 @@ transition: border-color 0.2s;
 .input-wrap:focus-within { border-color: var(–gold); }
 .input-wrap input {
 flex: 1; background: none; border: none; outline: none;
-font-size: 15px; color: var(–text); padding: 15px 0;
+font-size: 15px; color: #ffffff; padding: 15px 0;
 font-family: ‘Noto Serif KR’, serif;
 }
-.input-wrap input::placeholder { color: #cccccc; }
+.input-wrap input::placeholder { color: #ffffff; }
+.input-wrap input { color: #ffffff; }
 .search-icon { font-size: 16px; opacity: 0.6; flex-shrink: 0; }
 button.btn-primary {
 padding: 15px 28px; border-radius: 10px; border: none; cursor: pointer;
@@ -72,7 +73,7 @@ background: none; color: #ffffff; cursor: pointer;
 font-size: 13px; font-family: ‘DM Mono’, monospace;
 transition: all 0.2s;
 }
-button.btn-reset:hover { color: var(–text); }
+button.btn-reset:hover { color: #ffffff; }
 
 /* API Key input */
 .apikey-wrap {
@@ -85,10 +86,11 @@ margin-bottom: 24px;
 .apikey-row { display: flex; gap: 10px; align-items: center; }
 .apikey-row input {
 flex: 1; background: none; border: 1px solid var(–gold-border);
-border-radius: 8px; padding: 10px 14px; color: var(–text);
+border-radius: 8px; padding: 10px 14px; color: #ffffff;
 font-family: ‘DM Mono’, monospace; font-size: 13px; outline: none;
 transition: border-color 0.2s;
 }
+.apikey-row input::placeholder { color: #ffffff; }
 .apikey-row input:focus { border-color: var(–gold); }
 .apikey-note { font-size: 11px; color: #cccccc; margin-top: 8px; line-height: 1.6; }
 .apikey-note a { color: var(–gold); text-decoration: none; }
@@ -124,7 +126,7 @@ transition: all 0.4s;
 
 /* Result header */
 .result-header { margin-bottom: 28px; padding-bottom: 24px; border-bottom: 1px solid rgba(200,169,110,0.1); }
-.company-name { font-size: clamp(22px, 4vw, 32px); font-weight: 300; color: var(–text); margin-bottom: 8px; }
+.company-name { font-size: clamp(22px, 4vw, 32px); font-weight: 300; color: #ffffff; margin-bottom: 8px; }
 .ticker-badge {
 display: inline-block; padding: 4px 12px;
 background: var(–gold-dim); border: 1px solid var(–gold-border);
