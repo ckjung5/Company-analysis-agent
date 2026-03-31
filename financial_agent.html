@@ -13,84 +13,32 @@
   --bg: #0e0c09;
   --surface: rgba(255,255,255,0.03);
   --surface2: rgba(255,255,255,0.06);
-  --border: rgba(200,169,110,0.15);
   --up: #4fd1a0;
   --down: #e07060;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body {
-  background: var(--bg);
-  color: #ffffff;
-  font-family: 'Malgun Gothic', '맑은 고딕', sans-serif;
-  font-weight: 400;
-  min-height: 100vh;
-}
-body::before {
-  content: '';
-  position: fixed; inset: 0;
-  background-image:
-    linear-gradient(rgba(200,169,110,0.02) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(200,169,110,0.02) 1px, transparent 1px);
-  background-size: 40px 40px;
-  pointer-events: none; z-index: 0;
-}
+body { background: var(--bg); color: #ffffff; font-family: 'Malgun Gothic', '맑은 고딕', sans-serif; font-weight: 400; min-height: 100vh; }
+body::before { content: ''; position: fixed; inset: 0; background-image: linear-gradient(rgba(200,169,110,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(200,169,110,0.02) 1px, transparent 1px); background-size: 40px 40px; pointer-events: none; z-index: 0; }
 .wrap { max-width: 1100px; margin: 0 auto; padding: 48px 24px 80px; position: relative; z-index: 1; }
-
-/* Header */
 header { margin-bottom: 48px; }
 .header-tag { font-size: 11px; color: #aaa; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 12px; }
 h1 { font-size: clamp(28px, 5vw, 44px); font-weight: 400; color: var(--gold); letter-spacing: -0.02em; line-height: 1.1; margin-bottom: 8px; }
 .subtitle { font-size: 14px; color: #888; line-height: 1.7; }
-
-/* Panel */
-.panel {
-  background: var(--surface);
-  border: 1px solid var(--gold-border);
-  border-radius: 10px;
-  padding: 20px 24px;
-  margin-bottom: 16px;
-  position: relative;
-}
-.panel::before {
-  content: '';
-  position: absolute; top: 0; left: 0; right: 0;
-  height: 2px; border-radius: 10px 10px 0 0;
-  background: linear-gradient(90deg, var(--gold), transparent);
-}
-
+.panel { background: var(--surface); border: 1px solid var(--gold-border); border-radius: 10px; padding: 20px 24px; margin-bottom: 16px; position: relative; }
+.panel::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; border-radius: 10px 10px 0 0; background: linear-gradient(90deg, var(--gold), transparent); }
 .field-label { font-size: 11px; color: #888; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 12px; }
-
-/* Inputs */
 .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: stretch; }
 .input-wrap { flex: 1; min-width: 180px; position: relative; }
 .input-wrap .pfx { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 14px; color: var(--gold); pointer-events: none; }
-
-input[type="text"], input[type="password"] {
-  width: 100%; height: 46px;
-  background: var(--surface2);
-  border: 1px solid var(--gold-border);
-  color: #ffffff;
-  font-family: 'Malgun Gothic', '맑은 고딕', sans-serif;
-  font-size: 13px;
-  padding: 0 14px 0 40px;
-  border-radius: 8px; outline: none;
-  transition: border-color .2s, box-shadow .2s;
-}
+input[type="text"], input[type="password"] { width: 100%; height: 46px; background: var(--surface2); border: 1px solid var(--gold-border); color: #ffffff; font-family: 'Malgun Gothic', '맑은 고딕', sans-serif; font-size: 13px; padding: 0 14px 0 40px; border-radius: 8px; outline: none; transition: border-color .2s; }
 input::placeholder { color: #555; }
 input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(200,169,110,0.1); }
-
-.btn {
-  height: 46px; border: none; border-radius: 8px; cursor: pointer;
-  font-family: 'Malgun Gothic', '맑은 고딕', sans-serif;
-  font-size: 13px; transition: all .15s; white-space: nowrap; padding: 0 20px;
-}
+.btn { height: 46px; border: none; border-radius: 8px; cursor: pointer; font-family: 'Malgun Gothic', '맑은 고딕', sans-serif; font-size: 13px; transition: all .15s; white-space: nowrap; padding: 0 20px; }
 .btn-ghost { background: var(--surface2); color: #aaa; border: 1px solid var(--gold-border); }
 .btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
 .btn-primary { background: var(--gold); color: #1a1410; font-size: 14px; padding: 0 32px; }
 .btn-primary:hover { background: #d4b87a; transform: translateY(-1px); }
 .btn-primary:disabled { opacity: .5; cursor: not-allowed; transform: none; }
-
-/* Key status */
 .key-status { display: flex; align-items: center; gap: 6px; font-size: 11px; margin-top: 10px; color: #666; }
 .key-status .dot { width: 5px; height: 5px; border-radius: 50%; background: #666; }
 .key-status.ok { color: var(--up); }
@@ -98,86 +46,47 @@ input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(200,169,110,
 .key-status.warn { color: var(--down); }
 .key-status.warn .dot { background: var(--down); }
 .sec-note { font-size: 11px; color: #555; margin-top: 6px; }
-
 .hint { margin-top: 10px; font-size: 12px; color: #666; }
 .hint em { color: var(--gold); font-style: normal; }
-
-/* Status / Error */
-#status-bar {
-  display: none;
-  background: var(--surface);
-  border: 1px solid var(--gold-border);
-  border-left: 3px solid var(--gold);
-  padding: 13px 18px; border-radius: 8px; margin-bottom: 20px;
-  font-size: 12px; color: #aaa;
-}
+#status-bar { display: none; background: var(--surface); border: 1px solid var(--gold-border); border-left: 3px solid var(--gold); padding: 13px 18px; border-radius: 8px; margin-bottom: 20px; font-size: 12px; color: #aaa; }
 .sdot { display: inline-block; width: 6px; height: 6px; background: var(--gold); border-radius: 50%; margin-right: 10px; animation: blink 1s ease-in-out infinite; }
 @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.2} }
-
-#error-box {
-  display: none;
-  background: rgba(224,112,96,0.08);
-  border: 1px solid rgba(224,112,96,0.3);
-  border-left: 3px solid var(--down);
-  padding: 13px 18px; border-radius: 8px; margin-bottom: 20px;
-  font-size: 12px; color: var(--down);
-}
-
-/* Results */
+#error-box { display: none; background: rgba(224,112,96,0.08); border: 1px solid rgba(224,112,96,0.3); border-left: 3px solid var(--down); padding: 13px 18px; border-radius: 8px; margin-bottom: 20px; font-size: 12px; color: var(--down); }
 #results { display: flex; flex-direction: column; gap: 24px; }
 
-.company-card {
-  background: var(--surface);
-  border: 1px solid var(--gold-border);
-  border-radius: 10px; overflow: hidden;
-  animation: slideUp .4s ease forwards; opacity: 0;
-}
-@keyframes slideUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+/* Summary table */
+.summary-card { background: var(--surface); border: 1px solid var(--gold-border); border-radius: 10px; overflow: hidden; animation: slideUp .3s ease forwards; opacity: 0; }
+@keyframes slideUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+.summary-head { padding: 16px 24px; background: var(--surface2); border-bottom: 1px solid var(--gold-border); display: flex; align-items: center; gap: 10px; }
+.summary-head .icon { font-size: 16px; }
+.summary-head h3 { font-size: 14px; font-weight: 400; color: var(--gold); letter-spacing: 0.05em; }
+.summary-table { width: 100%; border-collapse: collapse; }
+.summary-table th { padding: 10px 18px; font-size: 11px; color: #888; letter-spacing: 0.08em; text-transform: uppercase; border-bottom: 1px solid var(--gold-border); text-align: left; background: var(--surface); }
+.summary-table td { padding: 11px 18px; font-size: 13px; border-bottom: 1px solid rgba(200,169,110,0.07); }
+.summary-table tr:last-child td { border-bottom: none; }
+.summary-table tr:hover td { background: rgba(200,169,110,0.04); }
+.td-company { color: #fff; font-size: 13px; }
+.td-ticker { color: var(--gold); font-size: 11px; }
+.td-num { color: #ddd; text-align: right; }
+.td-up { color: var(--up); text-align: right; }
+.td-down { color: var(--down); text-align: right; }
 
-.card-head {
-  padding: 18px 24px;
-  display: flex; align-items: center; justify-content: space-between;
-  border-bottom: 1px solid var(--gold-border);
-  background: var(--surface2); flex-wrap: wrap; gap: 10px;
-}
-.card-head h2 { font-size: 20px; font-weight: 400; color: #ffffff; }
-.card-head h2 .ticker { color: var(--gold); font-size: 13px; margin-left: 10px; }
-.pills { display: flex; gap: 6px; flex-wrap: wrap; }
-.pill { font-size: 11px; padding: 3px 10px; border-radius: 20px; border: 1px solid var(--gold-border); color: #aaa; }
-.pill.p { border-color: rgba(200,169,110,0.4); color: var(--gold); }
-.pill.g { border-color: rgba(79,209,160,0.4); color: var(--up); }
+/* Chart cards */
+.chart-card { background: var(--surface); border: 1px solid var(--gold-border); border-radius: 10px; overflow: hidden; animation: slideUp .4s ease forwards; opacity: 0; }
+.chart-head { padding: 16px 24px; background: var(--surface2); border-bottom: 1px solid var(--gold-border); display: flex; align-items: center; gap: 10px; }
+.chart-head h3 { font-size: 14px; font-weight: 400; color: #fff; }
+.chart-head .unit-badge { font-size: 11px; color: #888; background: rgba(255,255,255,0.05); border: 1px solid var(--gold-border); border-radius: 4px; padding: 2px 8px; margin-left: auto; }
+.chart-body { padding: 24px; height: 320px; }
 
-.chart-area { padding: 24px; height: 300px; }
-
-.stats-row {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-  gap: 1px; background: var(--gold-border);
-  border-top: 1px solid var(--gold-border);
-}
-.stat-cell { background: var(--bg); padding: 14px 18px; }
-.stat-cell .lbl { font-size: 10px; color: #666; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 5px; }
-.stat-cell .val { font-size: 18px; font-weight: 400; color: #ffffff; }
-.val.up { color: var(--up); }
-.val.down { color: var(--down); }
-
-/* Empty */
 .empty { text-align: center; padding: 80px 24px; color: #555; }
 .empty .icon { font-size: 40px; margin-bottom: 14px; opacity: .3; }
 .empty h3 { font-size: 17px; font-weight: 400; color: #aaa; margin-bottom: 8px; }
 .empty p { font-size: 12px; max-width: 300px; margin: 0 auto; line-height: 1.7; }
 
-/* Skeleton */
-.skel-card { background: var(--surface); border: 1px solid var(--gold-border); border-radius: 10px; overflow: hidden; }
-.skel-head { padding: 18px 24px; background: var(--surface2); border-bottom: 1px solid var(--gold-border); display: flex; gap: 12px; }
-.skel { background: linear-gradient(90deg, var(--surface2) 25%, rgba(200,169,110,0.1) 50%, var(--surface2) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 4px; }
+.skel { background: linear-gradient(90deg, var(--surface2) 25%, rgba(200,169,110,0.08) 50%, var(--surface2) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 4px; }
 @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
 
-@media (max-width: 600px) {
-  .row { flex-direction: column; }
-  .btn-primary { width: 100%; }
-  .chart-area { height: 240px; }
-}
+@media (max-width: 600px) { .row { flex-direction: column; } .btn-primary { width: 100%; } .chart-body { height: 240px; } }
 </style>
 </head>
 <body>
@@ -185,10 +94,9 @@ input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(200,169,110,
   <header>
     <div class="header-tag">AI Agent v1.0</div>
     <h1>재무 인텔리전스</h1>
-    <p class="subtitle">기업명을 입력하면 AI가 최근 5년 재무 현황을 분석하고 차트로 시각화합니다</p>
+    <p class="subtitle">기업명을 입력하면 AI가 최근 5년 재무 현황을 비교 분석합니다</p>
   </header>
 
-  <!-- API Key -->
   <div class="panel" id="apikey-section">
     <div class="field-label">Anthropic API Key</div>
     <div class="row">
@@ -206,20 +114,16 @@ input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(200,169,110,
     <div class="sec-note">⚠ Key는 브라우저 localStorage에만 저장되며 외부로 전송되지 않습니다.</div>
   </div>
 
-  <!-- Company Input -->
   <div class="panel">
-    <div class="field-label">분석할 기업</div>
+    <div class="field-label">분석할 기업 (쉼표로 구분)</div>
     <div class="row">
       <div class="input-wrap">
         <span class="pfx">🔎</span>
-        <input type="text" id="company-input" placeholder="Apple, Samsung, TSMC, Nvidia ..." onkeydown="if(event.key==='Enter') runAgent()">
+        <input type="text" id="company-input" placeholder="삼성전자, SK하이닉스, TSMC ..." onkeydown="if(event.key==='Enter') runAgent()">
       </div>
-      <button class="btn btn-primary" id="run-btn" onclick="runAgent()">▶ 분석</button>
+      <button class="btn btn-primary" id="run-btn" onclick="runAgent()">▶ 비교 분석</button>
     </div>
-    <div class="hint">
-      쉼표로 구분해 복수 입력 가능 &nbsp;|&nbsp;
-      예: <em>Apple, Microsoft, Google</em> &nbsp;|&nbsp; <em>삼성전자, SK하이닉스</em>
-    </div>
+    <div class="hint">예: <em>삼성전자, SK하이닉스</em> &nbsp;|&nbsp; <em>Apple, Microsoft, Google</em> &nbsp;|&nbsp; <em>NVIDIA, AMD, Intel</em></div>
   </div>
 
   <div id="status-bar"><span class="sdot"></span><span id="status-text">AI Agent 분석 중...</span></div>
@@ -229,18 +133,19 @@ input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(200,169,110,
     <div class="empty">
       <div class="icon">◈</div>
       <h3>No Data Loaded</h3>
-      <p>회사명을 입력하고 분석을 눌러 최근 5년 재무 현황을 확인하세요.</p>
+      <p>기업명을 입력하고 비교 분석을 눌러 최근 5년 재무 현황을 비교하세요.</p>
     </div>
   </div>
 </div>
 
 <script>
 var COLORS = [
-  { bar:'rgba(200,169,110,0.4)', barDark:'rgba(200,169,110,0.85)', line:'#C8A96E' },
-  { bar:'rgba(79,209,160,0.4)',  barDark:'rgba(79,209,160,0.85)',  line:'#4fd1a0' },
-  { bar:'rgba(224,112,96,0.4)',  barDark:'rgba(224,112,96,0.85)',  line:'#e07060' },
-  { bar:'rgba(100,160,255,0.4)', barDark:'rgba(100,160,255,0.85)', line:'#64a0ff' },
-  { bar:'rgba(200,120,255,0.4)', barDark:'rgba(200,120,255,0.85)', line:'#c878ff' },
+  { bar: 'rgba(200,169,110,0.7)', line: '#C8A96E' },
+  { bar: 'rgba(79,209,160,0.7)',  line: '#4fd1a0' },
+  { bar: 'rgba(100,160,255,0.7)', line: '#64a0ff' },
+  { bar: 'rgba(224,112,96,0.7)',  line: '#e07060' },
+  { bar: 'rgba(200,120,255,0.7)', line: '#c878ff' },
+  { bar: 'rgba(255,200,80,0.7)',  line: '#ffc850' },
 ];
 
 var charts = {};
@@ -263,8 +168,7 @@ function saveKey() {
 }
 
 function onKeyInput() {
-  var k = document.getElementById('api-key-input').value.trim();
-  setKeyStatus(k.startsWith('sk-ant-'));
+  setKeyStatus(document.getElementById('api-key-input').value.trim().startsWith('sk-ant-'));
 }
 
 function setKeyStatus(ok) {
@@ -302,153 +206,198 @@ function setError(msg) {
 async function runAgent() {
   var raw = document.getElementById('company-input').value.trim();
   if (!raw) return;
-
   var apiKey = getApiKey();
   if (!apiKey || !apiKey.startsWith('sk-ant-')) {
     setError('API Key를 먼저 입력하고 저장해 주세요.');
     document.getElementById('api-key-input').focus();
     return;
   }
-
-  var companies = raw.split(/[,，、\n]+/).map(function(s) { return s.trim(); }).filter(Boolean);
+  var companies = raw.split(/[,，、\n]+/).map(function(s){ return s.trim(); }).filter(Boolean);
   if (!companies.length) return;
 
   var btn = document.getElementById('run-btn');
   btn.disabled = true;
   setError('');
   setStatus(companies.length + '개 기업 재무 데이터 수집 중...');
-
-  Object.values(charts).forEach(function(c) { c.destroy(); });
+  Object.values(charts).forEach(function(c){ c.destroy(); });
   charts = {};
 
   var resultsEl = document.getElementById('results');
-  resultsEl.innerHTML = companies.map(function() {
-    return '<div class="skel-card"><div class="skel-head"><div class="skel" style="width:180px;height:20px"></div><div class="skel" style="width:60px;height:16px;margin-left:12px"></div></div><div style="padding:24px"><div class="skel" style="width:100%;height:260px"></div></div></div>';
-  }).join('');
+  resultsEl.innerHTML = '<div style="padding:40px 0;text-align:center"><div class="skel" style="width:100%;height:60px;margin-bottom:16px"></div><div class="skel" style="width:100%;height:320px;margin-bottom:16px"></div><div class="skel" style="width:100%;height:320px;margin-bottom:16px"></div><div class="skel" style="width:100%;height:320px"></div></div>';
 
-  var prompt = 'You are a financial data analyst. For each company below, provide key financial metrics for fiscal years 2020, 2021, 2022, 2023, and 2024.\n\nCompanies: ' + companies.join(', ') + '\n\nReturn ONLY a valid JSON array (no markdown, no explanation) in this exact format:\n[{"company":"Company Name","ticker":"TICKER","sector":"Sector","currency":"USD","years":[2020,2021,2022,2023,2024],"revenue":[number,number,number,number,number],"operating_income":[number,number,number,number,number],"operating_margin":[number,number,number,number,number],"net_income":[number,number,number,number,number],"note":"brief note"}]\n\nRules: monetary values in billions. operating_margin is percentage. Korean companies use KRW trillions with currency KRW. null if unavailable. Return ONLY the JSON array.';
+  var prompt = 'You are a financial data analyst. For each company below, provide key financial metrics for fiscal years 2020, 2021, 2022, 2023, and 2024.\n\nCompanies: ' + companies.join(', ') + '\n\nReturn ONLY a valid JSON array (no markdown, no explanation) in this exact format:\n[{"company":"Company Name","ticker":"TICKER","sector":"Sector","currency":"USD","years":[2020,2021,2022,2023,2024],"revenue":[n,n,n,n,n],"operating_income":[n,n,n,n,n],"operating_margin":[n,n,n,n,n],"net_income":[n,n,n,n,n]}]\n\nRules: monetary values in billions. operating_margin is percentage number. Korean companies: KRW trillions, currency field = KRW. null if unavailable. Return ONLY the JSON array.';
 
   try {
     var res = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 4000,
-        messages: [{ role: 'user', content: prompt }]
-      })
+      headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
+      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 4000, messages: [{ role: 'user', content: prompt }] })
     });
-
-    if (!res.ok) {
-      var e = await res.json();
-      throw new Error((e.error && e.error.message) || ('HTTP ' + res.status));
-    }
-
+    if (!res.ok) { var e = await res.json(); throw new Error((e.error && e.error.message) || ('HTTP ' + res.status)); }
     var data = await res.json();
     var text = '';
-    for (var i = 0; i < data.content.length; i++) {
-      if (data.content[i].type === 'text') text += data.content[i].text;
-    }
-
-    var s = text.indexOf('[');
-    var en = text.lastIndexOf(']');
-    if (s === -1 || en === -1) throw new Error('응답에서 JSON 데이터를 찾을 수 없습니다.');
-
+    for (var i = 0; i < data.content.length; i++) { if (data.content[i].type === 'text') text += data.content[i].text; }
+    var s = text.indexOf('['); var en = text.lastIndexOf(']');
+    if (s === -1 || en === -1) throw new Error('응답에서 JSON을 찾을 수 없습니다.');
     var financials = JSON.parse(text.substring(s, en + 1));
     setStatus('', false);
     resultsEl.innerHTML = '';
-    financials.forEach(function(c, i) { renderCard(c, i); });
-
+    renderAll(financials);
   } catch(err) {
     setStatus('', false);
     resultsEl.innerHTML = '';
     setError('분석 실패: ' + err.message);
   }
-
   btn.disabled = false;
 }
 
-function renderCard(data, idx) {
-  var color = COLORS[idx % COLORS.length];
-  var years   = data.years || [2020,2021,2022,2023,2024];
-  var revenue = data.revenue || [];
-  var opInc   = data.operating_income || [];
-  var opMar   = data.operating_margin || [];
-  var netInc  = data.net_income || [];
-  var cur     = data.currency || 'USD';
-  var unit    = cur === 'KRW' ? '조원' : 'B USD';
+function fmt(v, unit) {
+  if (v == null) return 'N/A';
+  return v.toFixed(1) + ' ' + unit;
+}
 
-  var lastRev = revenue[revenue.length - 1];
-  var prevRev = revenue[revenue.length - 2];
-  var growth  = prevRev ? (((lastRev - prevRev) / prevRev) * 100).toFixed(1) : null;
-  var lastMar = opMar[opMar.length - 1];
-  var lastNet = netInc[netInc.length - 1];
+function renderAll(list) {
+  if (!list || !list.length) return;
+  var years = list[0].years || [2020, 2021, 2022, 2023, 2024];
+  var unit = (list[0].currency === 'KRW') ? '조원' : 'B';
 
-  var chartId = 'chart-' + idx;
-  var card = document.createElement('div');
-  card.className = 'company-card';
-  card.style.animationDelay = (idx * 0.1) + 's';
-  card.innerHTML =
-    '<div class="card-head">' +
-      '<h2>' + data.company + '<span class="ticker">' + (data.ticker || '') + '</span></h2>' +
-      '<div class="pills">' +
-        '<span class="pill p">' + (data.sector || 'Technology') + '</span>' +
-        '<span class="pill g">' + cur + '</span>' +
-        (data.note ? '<span class="pill" title="' + data.note + '">추정</span>' : '') +
-      '</div>' +
-    '</div>' +
-    '<div class="chart-area"><canvas id="' + chartId + '"></canvas></div>' +
-    '<div class="stats-row">' +
-      '<div class="stat-cell"><div class="lbl">최신 매출</div><div class="val">' + (lastRev != null ? lastRev.toFixed(1) + ' ' + unit : 'N/A') + '</div></div>' +
-      '<div class="stat-cell"><div class="lbl">전년 대비 성장</div><div class="val ' + (growth > 0 ? 'up' : 'down') + '">' + (growth != null ? (growth > 0 ? '+' : '') + growth + '%' : 'N/A') + '</div></div>' +
-      '<div class="stat-cell"><div class="lbl">영업이익률</div><div class="val ' + (lastMar > 15 ? 'up' : lastMar < 5 ? 'down' : '') + '">' + (lastMar != null ? lastMar.toFixed(1) + '%' : 'N/A') + '</div></div>' +
-      '<div class="stat-cell"><div class="lbl">순이익</div><div class="val">' + (lastNet != null ? lastNet.toFixed(1) + ' ' + unit : 'N/A') + '</div></div>' +
-    '</div>';
+  // ── 요약 테이블 ──
+  var summaryCard = document.createElement('div');
+  summaryCard.className = 'summary-card';
+  summaryCard.style.animationDelay = '0s';
+  var lastYear = years[years.length - 1];
+  var thead = '<tr><th>기업</th><th style="text-align:right">매출 (' + lastYear + ')</th><th style="text-align:right">전년대비</th><th style="text-align:right">영업이익률</th><th style="text-align:right">순이익</th></tr>';
+  var tbody = list.map(function(d) {
+    var rev = d.revenue || [];
+    var mar = d.operating_margin || [];
+    var net = d.net_income || [];
+    var cur = d.currency === 'KRW' ? '조원' : 'B';
+    var lastRev = rev[rev.length-1];
+    var prevRev = rev[rev.length-2];
+    var growth = (prevRev && lastRev != null) ? (((lastRev - prevRev) / prevRev) * 100).toFixed(1) : null;
+    var lastMar = mar[mar.length-1];
+    var lastNet = net[net.length-1];
+    var growthClass = growth > 0 ? 'td-up' : 'td-down';
+    var growthStr = growth != null ? (growth > 0 ? '+' : '') + growth + '%' : 'N/A';
+    var marClass = lastMar > 15 ? 'td-up' : lastMar < 5 ? 'td-down' : 'td-num';
+    return '<tr>' +
+      '<td><span class="td-company">' + d.company + '</span> <span class="td-ticker">' + (d.ticker || '') + '</span></td>' +
+      '<td class="td-num">' + (lastRev != null ? lastRev.toFixed(1) + ' ' + cur : 'N/A') + '</td>' +
+      '<td class="' + growthClass + '">' + growthStr + '</td>' +
+      '<td class="' + marClass + '">' + (lastMar != null ? lastMar.toFixed(1) + '%' : 'N/A') + '</td>' +
+      '<td class="td-num">' + (lastNet != null ? lastNet.toFixed(1) + ' ' + cur : 'N/A') + '</td>' +
+    '</tr>';
+  }).join('');
 
-  document.getElementById('results').appendChild(card);
+  summaryCard.innerHTML =
+    '<div class="summary-head"><span class="icon">📋</span><h3>최신 재무 요약 (' + lastYear + ')</h3></div>' +
+    '<div style="overflow-x:auto"><table class="summary-table"><thead>' + thead + '</thead><tbody>' + tbody + '</tbody></table></div>';
+  document.getElementById('results').appendChild(summaryCard);
 
-  setTimeout(function() {
-    var ctx = document.getElementById(chartId).getContext('2d');
-    charts[chartId] = new Chart(ctx, {
-      data: {
-        labels: years,
-        datasets: [
-          { type:'bar', label:'매출 (' + unit + ')', data: revenue, backgroundColor: color.bar, borderColor: color.barDark, borderWidth: 1, yAxisID: 'y', order: 2 },
-          { type:'bar', label:'영업이익 (' + unit + ')', data: opInc, backgroundColor: color.barDark, borderColor: color.line, borderWidth: 1, yAxisID: 'y', order: 3 },
-          { type:'line', label:'영업이익률 (%)', data: opMar, borderColor: '#C8A96E', backgroundColor: 'rgba(200,169,110,0.05)', pointBackgroundColor: '#C8A96E', pointBorderColor: '#fff', pointBorderWidth: 2, pointRadius: 5, pointHoverRadius: 7, borderWidth: 2, tension: 0.35, yAxisID: 'y2', order: 1 }
-        ]
-      },
-      options: {
-        responsive: true, maintainAspectRatio: false,
-        interaction: { mode: 'index', intersect: false },
-        plugins: {
-          legend: { labels: { color: '#aaa', font: { family: 'Malgun Gothic', size: 11 }, boxWidth: 12, padding: 16 } },
-          tooltip: {
-            backgroundColor: '#1a1610', borderColor: 'rgba(200,169,110,0.3)', borderWidth: 1,
-            titleColor: '#ffffff', bodyColor: '#aaa',
-            titleFont: { family: 'Malgun Gothic', size: 13 },
-            bodyFont: { family: 'Malgun Gothic', size: 11 }, padding: 12,
-            callbacks: {
-              label: function(c) {
-                var v = c.parsed.y; if (v == null) return null;
-                return c.dataset.yAxisID === 'y2' ? ' 영업이익률: ' + v.toFixed(1) + '%' : ' ' + c.dataset.label + ': ' + v.toFixed(1);
+  // ── 3개 비교 차트 ──
+  var chartDefs = [
+    { key: 'revenue',          label: '매출액 비교',    icon: '📊', yLabel: unit },
+    { key: 'operating_income', label: '영업이익 비교',  icon: '💰', yLabel: unit },
+    { key: 'operating_margin', label: '영업이익률 비교', icon: '📈', yLabel: '%', isPercent: true },
+  ];
+
+  chartDefs.forEach(function(def, ci) {
+    var card = document.createElement('div');
+    card.className = 'chart-card';
+    card.style.animationDelay = ((ci + 1) * 0.12) + 's';
+    var chartId = 'chart-' + ci;
+    card.innerHTML =
+      '<div class="chart-head"><h3>' + def.icon + ' ' + def.label + '</h3><span class="unit-badge">단위: ' + def.yLabel + '</span></div>' +
+      '<div class="chart-body"><canvas id="' + chartId + '"></canvas></div>';
+    document.getElementById('results').appendChild(card);
+
+    setTimeout(function(id, d, companies) {
+      return function() {
+        var ctx = document.getElementById(id).getContext('2d');
+        var datasets = companies.map(function(comp, i) {
+          var vals = comp[d.key] || [];
+          var color = COLORS[i % COLORS.length];
+          return {
+            label: comp.company,
+            data: vals,
+            backgroundColor: color.bar,
+            borderColor: color.line,
+            borderWidth: 2,
+            borderRadius: 4,
+          };
+        });
+
+        charts[id] = new Chart(ctx, {
+          type: 'bar',
+          data: { labels: years, datasets: datasets },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: 'index', intersect: false },
+            plugins: {
+              legend: {
+                labels: { color: '#aaa', font: { family: 'Malgun Gothic', size: 11 }, boxWidth: 14, padding: 16 }
+              },
+              tooltip: {
+                backgroundColor: '#1a1610',
+                borderColor: 'rgba(200,169,110,0.3)',
+                borderWidth: 1,
+                titleColor: '#ffffff',
+                bodyColor: '#aaa',
+                titleFont: { family: 'Malgun Gothic', size: 13 },
+                bodyFont: { family: 'Malgun Gothic', size: 11 },
+                padding: 12,
+                callbacks: {
+                  label: function(c) {
+                    var v = c.parsed.y;
+                    if (v == null) return null;
+                    return ' ' + c.dataset.label + ': ' + v.toFixed(1) + (d.isPercent ? '%' : ' ' + d.yLabel);
+                  }
+                }
+              },
+              datalabels: false
+            },
+            scales: {
+              x: {
+                grid: { color: 'rgba(200,169,110,0.05)' },
+                ticks: { color: '#888', font: { family: 'Malgun Gothic', size: 11 } }
+              },
+              y: {
+                grid: { color: 'rgba(200,169,110,0.05)' },
+                ticks: {
+                  color: '#888',
+                  font: { family: 'Malgun Gothic', size: 10 },
+                  callback: function(v) { return d.isPercent ? v.toFixed(1) + '%' : v.toFixed(0); }
+                },
+                title: { display: true, text: def.yLabel, color: '#888', font: { family: 'Malgun Gothic', size: 10 } }
               }
             }
           }
-        },
-        scales: {
-          x: { grid: { color: 'rgba(200,169,110,0.05)' }, ticks: { color: '#888', font: { family: 'Malgun Gothic', size: 11 } } },
-          y: { position: 'left', grid: { color: 'rgba(200,169,110,0.05)' }, ticks: { color: '#888', font: { family: 'Malgun Gothic', size: 10 }, callback: function(v) { return v.toFixed(0); } }, title: { display: true, text: unit, color: '#888', font: { family: 'Malgun Gothic', size: 10 } } },
-          y2: { position: 'right', grid: { drawOnChartArea: false }, ticks: { color: '#C8A96E', font: { family: 'Malgun Gothic', size: 10 }, callback: function(v) { return v.toFixed(1) + '%'; } }, title: { display: true, text: '영업이익률 (%)', color: '#C8A96E', font: { family: 'Malgun Gothic', size: 10 } } }
-        }
-      }
-    });
-  }, 50);
+        });
+
+        // 숫자 레이블 플러그인 (Chart.js 내장 후처리)
+        var originalDraw = charts[id].draw.bind(charts[id]);
+        charts[id].draw = function() {
+          originalDraw();
+          var chartInstance = charts[id];
+          var cv = chartInstance.ctx;
+          cv.font = '10px Malgun Gothic';
+          cv.textAlign = 'center';
+          cv.textBaseline = 'bottom';
+          chartInstance.data.datasets.forEach(function(dataset, di) {
+            var meta = chartInstance.getDatasetMeta(di);
+            meta.data.forEach(function(bar, index) {
+              var val = dataset.data[index];
+              if (val == null) return;
+              var label = d.isPercent ? val.toFixed(1) + '%' : val.toFixed(1);
+              cv.fillStyle = '#ffffff';
+              cv.fillText(label, bar.x, bar.y - 4);
+            });
+          });
+        };
+      };
+    }(chartId, def, list), ci * 80 + 50);
+  });
 }
 
 document.addEventListener('DOMContentLoaded', loadSavedKey);
