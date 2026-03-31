@@ -1,429 +1,200 @@
 <!DOCTYPE html>
-
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FinScope — Financial Intelligence Agent</title>
+<title>재무 인텔리전스 에이전트</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #0a0a0f;
-  --surface: #12121a;
-  --surface2: #1a1a26;
-  --border: #2a2a3e;
-  --accent: #7c6cff;
-  --accent2: #00d4aa;
-  --accent3: #ff6b6b;
-  --text: #e8e8f0;
-  --text-dim: #7a7a9a;
-  --glow: rgba(124,108,255,0.15);
+  --gold: #C8A96E;
+  --gold-dim: rgba(200,169,110,0.15);
+  --gold-border: rgba(200,169,110,0.25);
+  --bg: #0e0c09;
+  --surface: rgba(255,255,255,0.03);
+  --surface2: rgba(255,255,255,0.06);
+  --border: rgba(200,169,110,0.15);
+  --up: #4fd1a0;
+  --down: #e07060;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
-
 body {
-background: var(–bg);
-color: var(–text);
-font-family: ‘Space Mono’, monospace;
-min-height: 100vh;
-overflow-x: hidden;
+  background: var(--bg);
+  color: #ffffff;
+  font-family: 'Malgun Gothic', '맑은 고딕', sans-serif;
+  font-weight: 400;
+  min-height: 100vh;
 }
-
 body::before {
-content: ‘’;
-position: fixed;
-inset: 0;
-background-image:
-linear-gradient(rgba(124,108,255,0.03) 1px, transparent 1px),
-linear-gradient(90deg, rgba(124,108,255,0.03) 1px, transparent 1px);
-background-size: 40px 40px;
-pointer-events: none;
-z-index: 0;
+  content: '';
+  position: fixed; inset: 0;
+  background-image:
+    linear-gradient(rgba(200,169,110,0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(200,169,110,0.02) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none; z-index: 0;
 }
+.wrap { max-width: 1100px; margin: 0 auto; padding: 48px 24px 80px; position: relative; z-index: 1; }
 
-.container {
-max-width: 1200px;
-margin: 0 auto;
-padding: 40px 24px;
-position: relative;
-z-index: 1;
-}
+/* Header */
+header { margin-bottom: 48px; }
+.header-tag { font-size: 11px; color: #aaa; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 12px; }
+h1 { font-size: clamp(28px, 5vw, 44px); font-weight: 400; color: var(--gold); letter-spacing: -0.02em; line-height: 1.1; margin-bottom: 8px; }
+.subtitle { font-size: 14px; color: #888; line-height: 1.7; }
 
-/* ── Header ── */
-header {
-display: flex;
-align-items: flex-start;
-justify-content: space-between;
-margin-bottom: 40px;
-gap: 24px;
-flex-wrap: wrap;
-}
-
-.logo-block h1 {
-font-family: ‘Syne’, sans-serif;
-font-size: clamp(32px, 5vw, 52px);
-font-weight: 800;
-letter-spacing: -1px;
-line-height: 1;
-color: #fff;
-}
-.logo-block h1 span { color: var(–accent); }
-.logo-block p {
-margin-top: 8px;
-color: var(–text-dim);
-font-size: 11px;
-letter-spacing: 2px;
-text-transform: uppercase;
-}
-.badge {
-background: linear-gradient(135deg, var(–accent), #4a3fcc);
-color: #fff;
-font-size: 9px;
-letter-spacing: 2px;
-text-transform: uppercase;
-padding: 4px 10px;
-border-radius: 2px;
-font-weight: 700;
-margin-top: 10px;
-display: inline-block;
-}
-
-/* ── Panel base ── */
+/* Panel */
 .panel {
-background: var(–surface);
-border: 1px solid var(–border);
-border-radius: 4px;
-padding: 24px 28px;
-margin-bottom: 16px;
-position: relative;
-overflow: hidden;
+  background: var(--surface);
+  border: 1px solid var(--gold-border);
+  border-radius: 10px;
+  padding: 20px 24px;
+  margin-bottom: 16px;
+  position: relative;
 }
 .panel::before {
-content: ‘’;
-position: absolute;
-top: 0; left: 0; right: 0;
-height: 2px;
-}
-.panel-key::before  { background: linear-gradient(90deg, var(–accent3), var(–accent)); }
-.panel-key.valid::before { background: linear-gradient(90deg, var(–accent2), var(–accent)); }
-.panel-comp::before { background: linear-gradient(90deg, var(–accent), var(–accent2)); }
-
-.panel-key { transition: border-color .3s; }
-.panel-key.valid { border-color: rgba(0,212,170,.35); }
-
-.field-label {
-font-size: 11px;
-letter-spacing: 3px;
-text-transform: uppercase;
-color: var(–text-dim);
-margin-bottom: 12px;
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 2px; border-radius: 10px 10px 0 0;
+  background: linear-gradient(90deg, var(--gold), transparent);
 }
 
-/* ── Input rows ── */
-.row {
-display: flex;
-gap: 10px;
-flex-wrap: wrap;
-align-items: stretch;
-}
+.field-label { font-size: 11px; color: #888; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 12px; }
 
-.input-wrap {
-flex: 1;
-min-width: 180px;
-position: relative;
-}
-.input-wrap .pfx {
-position: absolute;
-left: 13px;
-top: 50%;
-transform: translateY(-50%);
-font-size: 13px;
-color: var(–accent);
-font-weight: 700;
-pointer-events: none;
-user-select: none;
-}
+/* Inputs */
+.row { display: flex; gap: 10px; flex-wrap: wrap; align-items: stretch; }
+.input-wrap { flex: 1; min-width: 180px; position: relative; }
+.input-wrap .pfx { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 14px; color: var(--gold); pointer-events: none; }
 
-input[type=“text”],
-input[type=“password”] {
-width: 100%;
-height: 46px;
-background: var(–surface2);
-border: 1px solid var(–border);
-color: var(–text);
-font-family: ‘Space Mono’, monospace;
-font-size: 13px;
-padding: 0 14px 0 38px;
-border-radius: 3px;
-outline: none;
-transition: border-color .2s, box-shadow .2s;
+input[type="text"], input[type="password"] {
+  width: 100%; height: 46px;
+  background: var(--surface2);
+  border: 1px solid var(--gold-border);
+  color: #ffffff;
+  font-family: 'Malgun Gothic', '맑은 고딕', sans-serif;
+  font-size: 13px;
+  padding: 0 14px 0 40px;
+  border-radius: 8px; outline: none;
+  transition: border-color .2s, box-shadow .2s;
 }
-input[type=“password”] { letter-spacing: 2px; }
-input::placeholder { color: var(–text-dim); letter-spacing: 0; }
-input:focus {
-border-color: var(–accent);
-box-shadow: 0 0 0 3px var(–glow);
-}
+input::placeholder { color: #555; }
+input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(200,169,110,0.1); }
 
 .btn {
-height: 46px;
-border: none;
-border-radius: 3px;
-cursor: pointer;
-font-family: ‘Space Mono’, monospace;
-font-size: 11px;
-letter-spacing: 1px;
-text-transform: uppercase;
-transition: all .15s;
-white-space: nowrap;
-padding: 0 20px;
+  height: 46px; border: none; border-radius: 8px; cursor: pointer;
+  font-family: 'Malgun Gothic', '맑은 고딕', sans-serif;
+  font-size: 13px; transition: all .15s; white-space: nowrap; padding: 0 20px;
 }
-.btn-ghost {
-background: var(–surface2);
-color: var(–text-dim);
-border: 1px solid var(–border);
-}
-.btn-ghost:hover { border-color: var(–accent); color: var(–accent); }
+.btn-ghost { background: var(--surface2); color: #aaa; border: 1px solid var(--gold-border); }
+.btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
+.btn-primary { background: var(--gold); color: #1a1410; font-size: 14px; padding: 0 32px; }
+.btn-primary:hover { background: #d4b87a; transform: translateY(-1px); }
+.btn-primary:disabled { opacity: .5; cursor: not-allowed; transform: none; }
 
-.btn-primary {
-background: linear-gradient(135deg, var(–accent), #4a3fcc);
-color: #fff;
-font-family: ‘Syne’, sans-serif;
-font-size: 14px;
-font-weight: 700;
-padding: 0 32px;
-}
-.btn-primary:hover {
-transform: translateY(-1px);
-box-shadow: 0 6px 24px rgba(124,108,255,.4);
-}
-.btn-primary:active { transform: none; }
-.btn-primary:disabled { opacity: .5; cursor: not-allowed; transform: none; box-shadow: none; }
+/* Key status */
+.key-status { display: flex; align-items: center; gap: 6px; font-size: 11px; margin-top: 10px; color: #666; }
+.key-status .dot { width: 5px; height: 5px; border-radius: 50%; background: #666; }
+.key-status.ok { color: var(--up); }
+.key-status.ok .dot { background: var(--up); }
+.key-status.warn { color: var(--down); }
+.key-status.warn .dot { background: var(--down); }
+.sec-note { font-size: 11px; color: #555; margin-top: 6px; }
 
-/* ── Key status ── */
-.key-status {
-display: flex;
-align-items: center;
-gap: 6px;
-font-size: 10px;
-letter-spacing: 1px;
-margin-top: 10px;
-color: var(–text-dim);
-}
-.key-status .dot {
-width: 5px; height: 5px;
-border-radius: 50%;
-background: var(–text-dim);
-}
-.key-status.ok  { color: var(–accent2); }
-.key-status.ok .dot { background: var(–accent2); }
-.key-status.warn { color: var(–accent3); }
-.key-status.warn .dot { background: var(–accent3); }
+.hint { margin-top: 10px; font-size: 12px; color: #666; }
+.hint em { color: var(--gold); font-style: normal; }
 
-.sec-note {
-font-size: 10px;
-color: var(–text-dim);
-margin-top: 6px;
-opacity: .65;
-}
-
-/* ── Hint ── */
-.hint {
-margin-top: 10px;
-font-size: 11px;
-color: var(–text-dim);
-}
-.hint em { color: var(–accent2); font-style: normal; }
-
-/* ── Status bar ── */
+/* Status / Error */
 #status-bar {
-display: none;
-background: var(–surface2);
-border: 1px solid var(–border);
-border-left: 3px solid var(–accent);
-padding: 13px 18px;
-border-radius: 3px;
-margin-bottom: 20px;
-font-size: 12px;
-color: var(–text-dim);
-animation: pulseBorder 1.5s ease-in-out infinite;
+  display: none;
+  background: var(--surface);
+  border: 1px solid var(--gold-border);
+  border-left: 3px solid var(--gold);
+  padding: 13px 18px; border-radius: 8px; margin-bottom: 20px;
+  font-size: 12px; color: #aaa;
 }
-@keyframes pulseBorder {
-0%,100% { border-left-color: var(–accent); }
-50%      { border-left-color: var(–accent2); }
-}
-.sdot {
-display: inline-block;
-width: 6px; height: 6px;
-background: var(–accent2);
-border-radius: 50%;
-margin-right: 10px;
-animation: blink 1s ease-in-out infinite;
-}
+.sdot { display: inline-block; width: 6px; height: 6px; background: var(--gold); border-radius: 50%; margin-right: 10px; animation: blink 1s ease-in-out infinite; }
 @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.2} }
 
-/* ── Error ── */
 #error-box {
-display: none;
-background: rgba(255,107,107,.08);
-border: 1px solid rgba(255,107,107,.3);
-border-left: 3px solid var(–accent3);
-padding: 13px 18px;
-border-radius: 3px;
-margin-bottom: 20px;
-font-size: 12px;
-color: var(–accent3);
+  display: none;
+  background: rgba(224,112,96,0.08);
+  border: 1px solid rgba(224,112,96,0.3);
+  border-left: 3px solid var(--down);
+  padding: 13px 18px; border-radius: 8px; margin-bottom: 20px;
+  font-size: 12px; color: var(--down);
 }
 
-/* ── Results ── */
-#results { display: flex; flex-direction: column; gap: 28px; }
+/* Results */
+#results { display: flex; flex-direction: column; gap: 24px; }
 
 .company-card {
-background: var(–surface);
-border: 1px solid var(–border);
-border-radius: 4px;
-overflow: hidden;
-animation: slideUp .4s ease forwards;
-opacity: 0;
+  background: var(--surface);
+  border: 1px solid var(--gold-border);
+  border-radius: 10px; overflow: hidden;
+  animation: slideUp .4s ease forwards; opacity: 0;
 }
-@keyframes slideUp {
-from { opacity:0; transform:translateY(20px); }
-to   { opacity:1; transform:translateY(0); }
-}
+@keyframes slideUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
 
 .card-head {
-padding: 18px 24px;
-display: flex;
-align-items: center;
-justify-content: space-between;
-border-bottom: 1px solid var(–border);
-background: var(–surface2);
-flex-wrap: wrap;
-gap: 10px;
+  padding: 18px 24px;
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid var(--gold-border);
+  background: var(--surface2); flex-wrap: wrap; gap: 10px;
 }
-.card-head h2 {
-font-family: ‘Syne’, sans-serif;
-font-size: 20px;
-font-weight: 800;
-color: #fff;
-}
-.card-head h2 .ticker {
-color: var(–accent);
-font-size: 12px;
-font-weight: 600;
-margin-left: 8px;
-}
+.card-head h2 { font-size: 20px; font-weight: 400; color: #ffffff; }
+.card-head h2 .ticker { color: var(--gold); font-size: 13px; margin-left: 10px; }
 .pills { display: flex; gap: 6px; flex-wrap: wrap; }
-.pill {
-font-size: 10px;
-letter-spacing: 1px;
-text-transform: uppercase;
-padding: 3px 9px;
-border-radius: 2px;
-border: 1px solid var(–border);
-color: var(–text-dim);
-}
-.pill.p  { border-color: rgba(124,108,255,.4); color: var(–accent); }
-.pill.g  { border-color: rgba(0,212,170,.4);   color: var(–accent2); }
+.pill { font-size: 11px; padding: 3px 10px; border-radius: 20px; border: 1px solid var(--gold-border); color: #aaa; }
+.pill.p { border-color: rgba(200,169,110,0.4); color: var(--gold); }
+.pill.g { border-color: rgba(79,209,160,0.4); color: var(--up); }
 
-.chart-area { padding: 24px; height: 310px; }
+.chart-area { padding: 24px; height: 300px; }
 
 .stats-row {
-display: grid;
-grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-gap: 1px;
-background: var(–border);
-border-top: 1px solid var(–border);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 1px; background: var(--gold-border);
+  border-top: 1px solid var(--gold-border);
 }
-.stat-cell {
-background: var(–surface);
-padding: 14px 18px;
-}
-.stat-cell .lbl {
-font-size: 9px;
-letter-spacing: 2px;
-text-transform: uppercase;
-color: var(–text-dim);
-margin-bottom: 5px;
-}
-.stat-cell .val {
-font-family: ‘Syne’, sans-serif;
-font-size: 17px;
-font-weight: 700;
-color: #fff;
-}
-.val.up   { color: var(–accent2); }
-.val.down { color: var(–accent3); }
+.stat-cell { background: var(--bg); padding: 14px 18px; }
+.stat-cell .lbl { font-size: 10px; color: #666; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 5px; }
+.stat-cell .val { font-size: 18px; font-weight: 400; color: #ffffff; }
+.val.up { color: var(--up); }
+.val.down { color: var(--down); }
 
-/* ── Empty ── */
-.empty {
-text-align: center;
-padding: 80px 24px;
-color: var(–text-dim);
-}
-.empty .icon { font-size: 44px; margin-bottom: 14px; opacity: .3; }
-.empty h3 {
-font-family: ‘Syne’, sans-serif;
-font-size: 17px;
-font-weight: 700;
-color: var(–text);
-opacity: .4;
-margin-bottom: 8px;
-}
+/* Empty */
+.empty { text-align: center; padding: 80px 24px; color: #555; }
+.empty .icon { font-size: 40px; margin-bottom: 14px; opacity: .3; }
+.empty h3 { font-size: 17px; font-weight: 400; color: #aaa; margin-bottom: 8px; }
 .empty p { font-size: 12px; max-width: 300px; margin: 0 auto; line-height: 1.7; }
 
-/* ── Skeleton ── */
-.skel-card {
-background: var(–surface);
-border: 1px solid var(–border);
-border-radius: 4px;
-overflow: hidden;
-}
-.skel-head {
-padding: 18px 24px;
-background: var(–surface2);
-border-bottom: 1px solid var(–border);
-display: flex;
-gap: 12px;
-}
-.skel {
-background: linear-gradient(90deg, var(–surface2) 25%, var(–border) 50%, var(–surface2) 75%);
-background-size: 200% 100%;
-animation: shimmer 1.5s infinite;
-border-radius: 2px;
-}
+/* Skeleton */
+.skel-card { background: var(--surface); border: 1px solid var(--gold-border); border-radius: 10px; overflow: hidden; }
+.skel-head { padding: 18px 24px; background: var(--surface2); border-bottom: 1px solid var(--gold-border); display: flex; gap: 12px; }
+.skel { background: linear-gradient(90deg, var(--surface2) 25%, rgba(200,169,110,0.1) 50%, var(--surface2) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 4px; }
 @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
 
-/* ── Responsive ── */
 @media (max-width: 600px) {
-.row { flex-direction: column; }
-.btn-primary { width: 100%; }
-.chart-area { height: 240px; }
+  .row { flex-direction: column; }
+  .btn-primary { width: 100%; }
+  .chart-area { height: 240px; }
 }
 </style>
-
 </head>
 <body>
-<div class="container">
-
+<div class="wrap">
   <header>
-    <div class="logo-block">
-      <h1>FIN<span>SCOPE</span></h1>
-      <p>Financial Intelligence Agent</p>
-      <div class="badge">Powered by Claude AI</div>
-    </div>
+    <div class="header-tag">AI Agent v1.0</div>
+    <h1>재무 인텔리전스</h1>
+    <p class="subtitle">기업명을 입력하면 AI가 최근 5년 재무 현황을 분석하고 차트로 시각화합니다</p>
   </header>
 
   <!-- API Key -->
-
-  <div class="panel panel-key" id="apikey-section">
-    <div class="field-label">// Anthropic API Key</div>
+  <div class="panel" id="apikey-section">
+    <div class="field-label">Anthropic API Key</div>
     <div class="row">
       <div class="input-wrap">
         <span class="pfx">🔑</span>
-        <input type="password" id="api-key-input" placeholder="sk-ant-api03-..."
-          oninput="onKeyInput()" autocomplete="off" spellcheck="false">
+        <input type="password" id="api-key-input" placeholder="sk-ant-api03-..." oninput="onKeyInput()" autocomplete="off" spellcheck="false">
       </div>
       <button class="btn btn-ghost" onclick="toggleKey()" id="toggle-btn">SHOW</button>
       <button class="btn btn-ghost" onclick="saveKey()">저장</button>
@@ -432,20 +203,18 @@ border-radius: 2px;
       <span class="dot"></span>
       <span id="key-status-text">API Key가 입력되지 않았습니다</span>
     </div>
-    <div class="sec-note">⚠ Key는 브라우저 localStorage에만 저장되며 외부로 전송되지 않습니다. 개인 기기에서만 사용하세요.</div>
+    <div class="sec-note">⚠ Key는 브라우저 localStorage에만 저장되며 외부로 전송되지 않습니다.</div>
   </div>
 
   <!-- Company Input -->
-
-  <div class="panel panel-comp">
-    <div class="field-label">// Target Companies</div>
+  <div class="panel">
+    <div class="field-label">분석할 기업</div>
     <div class="row">
       <div class="input-wrap">
-        <span class="pfx">//</span>
-        <input type="text" id="company-input" placeholder="Apple, Samsung, TSMC, Nvidia ..."
-          onkeydown="if(event.key==='Enter') runAgent()">
+        <span class="pfx">🔎</span>
+        <input type="text" id="company-input" placeholder="Apple, Samsung, TSMC, Nvidia ..." onkeydown="if(event.key==='Enter') runAgent()">
       </div>
-      <button class="btn btn-primary" id="run-btn" onclick="runAgent()">▶ Analyze</button>
+      <button class="btn btn-primary" id="run-btn" onclick="runAgent()">▶ 분석</button>
     </div>
     <div class="hint">
       쉼표로 구분해 복수 입력 가능 &nbsp;|&nbsp;
@@ -460,273 +229,229 @@ border-radius: 2px;
     <div class="empty">
       <div class="icon">◈</div>
       <h3>No Data Loaded</h3>
-      <p>회사명을 입력하고 Analyze를 눌러 최근 5년 재무 현황을 확인하세요.</p>
+      <p>회사명을 입력하고 분석을 눌러 최근 5년 재무 현황을 확인하세요.</p>
     </div>
   </div>
-
 </div>
+
 <script>
-// ── Constants ───────────────────────────────────────────────
-const COLORS = [
-  { bar:'rgba(124,108,255,0.55)', barDark:'rgba(124,108,255,0.9)', line:'#7c6cff' },
-  { bar:'rgba(0,212,170,0.55)',   barDark:'rgba(0,212,170,0.9)',   line:'#00d4aa' },
-  { bar:'rgba(255,107,107,0.55)', barDark:'rgba(255,107,107,0.9)', line:'#ff6b6b' },
-  { bar:'rgba(255,187,51,0.55)',  barDark:'rgba(255,187,51,0.9)',  line:'#ffbb33' },
-  { bar:'rgba(100,200,255,0.55)', barDark:'rgba(100,200,255,0.9)', line:'#64c8ff' },
+var COLORS = [
+  { bar:'rgba(200,169,110,0.4)', barDark:'rgba(200,169,110,0.85)', line:'#C8A96E' },
+  { bar:'rgba(79,209,160,0.4)',  barDark:'rgba(79,209,160,0.85)',  line:'#4fd1a0' },
+  { bar:'rgba(224,112,96,0.4)',  barDark:'rgba(224,112,96,0.85)',  line:'#e07060' },
+  { bar:'rgba(100,160,255,0.4)', barDark:'rgba(100,160,255,0.85)', line:'#64a0ff' },
+  { bar:'rgba(200,120,255,0.4)', barDark:'rgba(200,120,255,0.85)', line:'#c878ff' },
 ];
 
-let charts = {};
-let savedApiKey = ‘’;
+var charts = {};
 
-// ── API Key helpers ─────────────────────────────────────────
 function loadSavedKey() {
-try {
-const k = localStorage.getItem(‘finscope_api_key’) || ‘’;
-if (!k) return;
-document.getElementById(‘api-key-input’).value = k;
-savedApiKey = k;
-setKeyStatus(true);
-document.getElementById(‘apikey-section’).classList.add(‘valid’);
-} catch(e) {}
+  try {
+    var k = localStorage.getItem('finscope_api_key') || '';
+    if (!k) return;
+    document.getElementById('api-key-input').value = k;
+    setKeyStatus(true);
+  } catch(e) {}
 }
 
 function saveKey() {
-const k = document.getElementById(‘api-key-input’).value.trim();
-if (!k) { alert(‘API Key를 입력해 주세요.’); return; }
-if (!k.startsWith(‘sk-ant-’)) {
-alert(‘올바른 Anthropic API Key 형식이 아닙니다.\n(sk-ant-api03-… 형태여야 합니다)’);
-return;
-}
-try { localStorage.setItem(‘finscope_api_key’, k); } catch(e) {}
-savedApiKey = k;
-setKeyStatus(true);
-document.getElementById(‘apikey-section’).classList.add(‘valid’);
+  var k = document.getElementById('api-key-input').value.trim();
+  if (!k) { alert('API Key를 입력해 주세요.'); return; }
+  if (!k.startsWith('sk-ant-')) { alert('올바른 Anthropic API Key 형식이 아닙니다.'); return; }
+  try { localStorage.setItem('finscope_api_key', k); } catch(e) {}
+  setKeyStatus(true);
 }
 
 function onKeyInput() {
-const k = document.getElementById(‘api-key-input’).value.trim();
-const ok = k.startsWith(‘sk-ant-’);
-setKeyStatus(ok);
-document.getElementById(‘apikey-section’).classList.toggle(‘valid’, ok);
+  var k = document.getElementById('api-key-input').value.trim();
+  setKeyStatus(k.startsWith('sk-ant-'));
 }
 
 function setKeyStatus(ok) {
-const el  = document.getElementById(‘key-status’);
-const txt = document.getElementById(‘key-status-text’);
-el.className = ’key-status ’ + (ok ? ‘ok’ : ‘warn’);
-txt.textContent = ok ? ‘API Key 확인됨 — 분석 준비 완료’ : ‘API Key가 입력되지 않았습니다’;
+  var el = document.getElementById('key-status');
+  var txt = document.getElementById('key-status-text');
+  el.className = 'key-status ' + (ok ? 'ok' : 'warn');
+  txt.textContent = ok ? 'API Key 확인됨 — 분석 준비 완료' : 'API Key가 입력되지 않았습니다';
 }
 
 function toggleKey() {
-const inp = document.getElementById(‘api-key-input’);
-const btn = document.getElementById(‘toggle-btn’);
-inp.type = inp.type === ‘password’ ? ‘text’ : ‘password’;
-btn.textContent = inp.type === ‘password’ ? ‘SHOW’ : ‘HIDE’;
+  var inp = document.getElementById('api-key-input');
+  var btn = document.getElementById('toggle-btn');
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+  btn.textContent = inp.type === 'password' ? 'SHOW' : 'HIDE';
 }
 
 function getApiKey() {
-return document.getElementById(‘api-key-input’).value.trim() || savedApiKey;
+  var v = document.getElementById('api-key-input').value.trim();
+  if (v) return v;
+  try { return localStorage.getItem('finscope_api_key') || ''; } catch(e) { return ''; }
 }
 
-// ── UI helpers ──────────────────────────────────────────────
-function setStatus(msg, show=true) {
-const bar = document.getElementById(‘status-bar’);
-document.getElementById(‘status-text’).textContent = msg;
-bar.style.display = show ? ‘block’ : ‘none’;
+function setStatus(msg, show) {
+  var bar = document.getElementById('status-bar');
+  document.getElementById('status-text').textContent = msg;
+  bar.style.display = (show === false) ? 'none' : 'block';
 }
 
 function setError(msg) {
-const box = document.getElementById(‘error-box’);
-box.textContent = msg ? ’⚠ ’ + msg : ‘’;
-box.style.display = msg ? ‘block’ : ‘none’;
+  var box = document.getElementById('error-box');
+  box.textContent = msg ? '⚠ ' + msg : '';
+  box.style.display = msg ? 'block' : 'none';
 }
 
-// ── Main agent ──────────────────────────────────────────────
 async function runAgent() {
-const raw = document.getElementById(‘company-input’).value.trim();
-if (!raw) return;
+  var raw = document.getElementById('company-input').value.trim();
+  if (!raw) return;
 
-const apiKey = getApiKey();
-if (!apiKey || !apiKey.startsWith(‘sk-ant-’)) {
-setError(‘API Key를 먼저 입력하고 저장해 주세요. (sk-ant-api03-… 형태)’);
-document.getElementById(‘api-key-input’).focus();
-return;
-}
+  var apiKey = getApiKey();
+  if (!apiKey || !apiKey.startsWith('sk-ant-')) {
+    setError('API Key를 먼저 입력하고 저장해 주세요.');
+    document.getElementById('api-key-input').focus();
+    return;
+  }
 
-const companies = raw.split(/[,，、\n]+/).map(s => s.trim()).filter(Boolean);
-if (!companies.length) return;
+  var companies = raw.split(/[,，、\n]+/).map(function(s) { return s.trim(); }).filter(Boolean);
+  if (!companies.length) return;
 
-const btn = document.getElementById(‘run-btn’);
-btn.disabled = true;
-setError(’’);
-setStatus(`${companies.length}개 기업 재무 데이터 수집 중...`);
+  var btn = document.getElementById('run-btn');
+  btn.disabled = true;
+  setError('');
+  setStatus(companies.length + '개 기업 재무 데이터 수집 중...');
 
-Object.values(charts).forEach(c => c.destroy());
-charts = {};
+  Object.values(charts).forEach(function(c) { c.destroy(); });
+  charts = {};
 
-const resultsEl = document.getElementById(‘results’);
-resultsEl.innerHTML = companies.map((_, i) => ` <div class="skel-card"> <div class="skel-head"> <div class="skel" style="width:180px;height:20px"></div> <div class="skel" style="width:60px;height:16px;margin-left:12px"></div> </div> <div style="padding:24px"> <div class="skel" style="width:100%;height:260px"></div> </div> </div>`).join(’’);
+  var resultsEl = document.getElementById('results');
+  resultsEl.innerHTML = companies.map(function() {
+    return '<div class="skel-card"><div class="skel-head"><div class="skel" style="width:180px;height:20px"></div><div class="skel" style="width:60px;height:16px;margin-left:12px"></div></div><div style="padding:24px"><div class="skel" style="width:100%;height:260px"></div></div></div>';
+  }).join('');
 
-const prompt = `You are a financial data analyst. For each company below, provide key financial metrics for fiscal years 2020, 2021, 2022, 2023, and 2024.
+  var prompt = 'You are a financial data analyst. For each company below, provide key financial metrics for fiscal years 2020, 2021, 2022, 2023, and 2024.\n\nCompanies: ' + companies.join(', ') + '\n\nReturn ONLY a valid JSON array (no markdown, no explanation) in this exact format:\n[{"company":"Company Name","ticker":"TICKER","sector":"Sector","currency":"USD","years":[2020,2021,2022,2023,2024],"revenue":[number,number,number,number,number],"operating_income":[number,number,number,number,number],"operating_margin":[number,number,number,number,number],"net_income":[number,number,number,number,number],"note":"brief note"}]\n\nRules: monetary values in billions. operating_margin is percentage. Korean companies use KRW trillions with currency KRW. null if unavailable. Return ONLY the JSON array.';
 
-Companies: ${companies.join(’, ’)}
-
-Return ONLY a valid JSON array (no markdown, no preamble) in this exact format:
-[
-{
-“company”: “Company Name”,
-“ticker”: “TICKER”,
-“sector”: “Sector”,
-“currency”: “USD”,
-“years”: [2020, 2021, 2022, 2023, 2024],
-“revenue”: [number_in_billions, …],
-“operating_income”: [number_in_billions, …],
-“operating_margin”: [percentage_number, …],
-“net_income”: [number_in_billions, …],
-“note”: “brief note”
-}
-]
-
-Rules:
-
-- Monetary values in billions (100 = $100B)
-- operating_margin is a percentage (25.5 = 25.5%)
-- Korean companies: use KRW trillions with “KRW” currency field
-- null if data unavailable
-- Return ONLY the JSON array`;
-  
   try {
-  const res = await fetch(‘https://api.anthropic.com/v1/messages’, {
-  method: ‘POST’,
-  headers: {
-  ‘Content-Type’: ‘application/json’,
-  ‘x-api-key’: apiKey,
-  ‘anthropic-version’: ‘2023-06-01’,
-  ‘anthropic-dangerous-direct-browser-access’: ‘true’
-  },
-  body: JSON.stringify({
-  model: ‘claude-sonnet-4-20250514’,
-  max_tokens: 4000,
-  messages: [{ role: ‘user’, content: prompt }]
-  })
-  });
-  
-  if (!res.ok) {
-  const e = await res.json();
-  throw new Error(e.error?.message || `HTTP ${res.status}`);
-  }
-  
-  const data = await res.json();
-  const text = data.content.filter(b => b.type === ‘text’).map(b => b.text).join(’’);
-  const match = text.match(/[[\s\S]*]/);
-  if (!match) throw new Error(‘응답에서 JSON 데이터를 찾을 수 없습니다.’);
-  
-  const financials = JSON.parse(match[0]);
-  setStatus(’’, false);
-  resultsEl.innerHTML = ‘’;
-  financials.forEach((c, i) => renderCard(c, i));
-  
+    var res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 4000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    if (!res.ok) {
+      var e = await res.json();
+      throw new Error((e.error && e.error.message) || ('HTTP ' + res.status));
+    }
+
+    var data = await res.json();
+    var text = '';
+    for (var i = 0; i < data.content.length; i++) {
+      if (data.content[i].type === 'text') text += data.content[i].text;
+    }
+
+    var s = text.indexOf('[');
+    var en = text.lastIndexOf(']');
+    if (s === -1 || en === -1) throw new Error('응답에서 JSON 데이터를 찾을 수 없습니다.');
+
+    var financials = JSON.parse(text.substring(s, en + 1));
+    setStatus('', false);
+    resultsEl.innerHTML = '';
+    financials.forEach(function(c, i) { renderCard(c, i); });
+
   } catch(err) {
-  setStatus(’’, false);
-  resultsEl.innerHTML = ‘’;
-  setError(’분석 실패: ’ + err.message);
-  console.error(err);
+    setStatus('', false);
+    resultsEl.innerHTML = '';
+    setError('분석 실패: ' + err.message);
   }
-  
+
   btn.disabled = false;
-  }
+}
 
-// ── Render card ─────────────────────────────────────────────
 function renderCard(data, idx) {
-const color = COLORS[idx % COLORS.length];
-const years    = data.years || [2020,2021,2022,2023,2024];
-const revenue  = data.revenue  || [];
-const opInc    = data.operating_income || [];
-const opMar    = data.operating_margin || [];
-const netInc   = data.net_income || [];
-const cur      = data.currency || ‘USD’;
-const unit     = cur === ‘KRW’ ? ‘조원’ : ‘B USD’;
+  var color = COLORS[idx % COLORS.length];
+  var years   = data.years || [2020,2021,2022,2023,2024];
+  var revenue = data.revenue || [];
+  var opInc   = data.operating_income || [];
+  var opMar   = data.operating_margin || [];
+  var netInc  = data.net_income || [];
+  var cur     = data.currency || 'USD';
+  var unit    = cur === 'KRW' ? '조원' : 'B USD';
 
-const lastRev  = revenue[revenue.length-1];
-const prevRev  = revenue[revenue.length-2];
-const growth   = prevRev ? (((lastRev-prevRev)/prevRev)*100).toFixed(1) : null;
-const lastMar  = opMar[opMar.length-1];
-const lastNet  = netInc[netInc.length-1];
+  var lastRev = revenue[revenue.length - 1];
+  var prevRev = revenue[revenue.length - 2];
+  var growth  = prevRev ? (((lastRev - prevRev) / prevRev) * 100).toFixed(1) : null;
+  var lastMar = opMar[opMar.length - 1];
+  var lastNet = netInc[netInc.length - 1];
 
-const chartId = `chart-${idx}`;
-const card = document.createElement(‘div’);
-card.className = ‘company-card’;
-card.style.animationDelay = `${idx*0.1}s`;
-card.innerHTML = ` <div class="card-head"> <h2>${data.company}<span class="ticker">${data.ticker||''}</span></h2> <div class="pills"> <span class="pill p">${data.sector||'Technology'}</span> <span class="pill g">${cur}</span> ${data.note?`<span class="pill" title="${data.note}">est.</span>`:''} </div> </div> <div class="chart-area"><canvas id="${chartId}"></canvas></div> <div class="stats-row"> <div class="stat-cell"> <div class="lbl">Latest Revenue</div> <div class="val">${lastRev!=null?lastRev.toFixed(1)+' '+unit:'N/A'}</div> </div> <div class="stat-cell"> <div class="lbl">YoY Growth</div> <div class="val ${growth>0?'up':'down'}">${growth!=null?(growth>0?'+':'')+growth+'%':'N/A'}</div> </div> <div class="stat-cell"> <div class="lbl">Op. Margin</div> <div class="val ${lastMar>15?'up':lastMar<5?'down':''}">${lastMar!=null?lastMar.toFixed(1)+'%':'N/A'}</div> </div> <div class="stat-cell"> <div class="lbl">Net Income</div> <div class="val">${lastNet!=null?lastNet.toFixed(1)+' '+unit:'N/A'}</div> </div> </div>`;
+  var chartId = 'chart-' + idx;
+  var card = document.createElement('div');
+  card.className = 'company-card';
+  card.style.animationDelay = (idx * 0.1) + 's';
+  card.innerHTML =
+    '<div class="card-head">' +
+      '<h2>' + data.company + '<span class="ticker">' + (data.ticker || '') + '</span></h2>' +
+      '<div class="pills">' +
+        '<span class="pill p">' + (data.sector || 'Technology') + '</span>' +
+        '<span class="pill g">' + cur + '</span>' +
+        (data.note ? '<span class="pill" title="' + data.note + '">추정</span>' : '') +
+      '</div>' +
+    '</div>' +
+    '<div class="chart-area"><canvas id="' + chartId + '"></canvas></div>' +
+    '<div class="stats-row">' +
+      '<div class="stat-cell"><div class="lbl">최신 매출</div><div class="val">' + (lastRev != null ? lastRev.toFixed(1) + ' ' + unit : 'N/A') + '</div></div>' +
+      '<div class="stat-cell"><div class="lbl">전년 대비 성장</div><div class="val ' + (growth > 0 ? 'up' : 'down') + '">' + (growth != null ? (growth > 0 ? '+' : '') + growth + '%' : 'N/A') + '</div></div>' +
+      '<div class="stat-cell"><div class="lbl">영업이익률</div><div class="val ' + (lastMar > 15 ? 'up' : lastMar < 5 ? 'down' : '') + '">' + (lastMar != null ? lastMar.toFixed(1) + '%' : 'N/A') + '</div></div>' +
+      '<div class="stat-cell"><div class="lbl">순이익</div><div class="val">' + (lastNet != null ? lastNet.toFixed(1) + ' ' + unit : 'N/A') + '</div></div>' +
+    '</div>';
 
-document.getElementById(‘results’).appendChild(card);
+  document.getElementById('results').appendChild(card);
 
-setTimeout(() => {
-const ctx = document.getElementById(chartId).getContext(‘2d’);
-charts[chartId] = new Chart(ctx, {
-data: {
-labels: years,
-datasets: [
-{
-type:‘bar’, label:`Revenue (${unit})`, data:revenue,
-backgroundColor:color.bar, borderColor:color.barDark,
-borderWidth:1, yAxisID:‘y’, order:2
-},
-{
-type:‘bar’, label:`Op. Income (${unit})`, data:opInc,
-backgroundColor:color.barDark, borderColor:color.line,
-borderWidth:1, yAxisID:‘y’, order:3
-},
-{
-type:‘line’, label:‘Op. Margin (%)’, data:opMar,
-borderColor:’#ffffff’, backgroundColor:‘rgba(255,255,255,0.04)’,
-pointBackgroundColor:’#fff’, pointBorderColor:color.line,
-pointBorderWidth:2, pointRadius:5, pointHoverRadius:7,
-borderWidth:2, tension:0.35, yAxisID:‘y2’, order:1
-}
-]
-},
-options: {
-responsive:true, maintainAspectRatio:false,
-interaction:{ mode:‘index’, intersect:false },
-plugins:{
-legend:{ labels:{ color:’#7a7a9a’, font:{family:‘Space Mono’,size:10}, boxWidth:12, padding:16 } },
-tooltip:{
-backgroundColor:’#1a1a26’, borderColor:’#2a2a3e’, borderWidth:1,
-titleColor:’#e8e8f0’, bodyColor:’#7a7a9a’,
-titleFont:{family:‘Syne’,size:13,weight:‘700’},
-bodyFont:{family:‘Space Mono’,size:11}, padding:12,
-callbacks:{
-label(c){
-const v=c.parsed.y; if(v==null) return null;
-return c.dataset.yAxisID===‘y2’
-? ` Op. Margin: ${v.toFixed(1)}%`
-: ` ${c.dataset.label}: ${v.toFixed(1)}`;
-}
-}
-}
-},
-scales:{
-x:{ grid:{color:‘rgba(255,255,255,0.04)’}, ticks:{color:’#7a7a9a’,font:{family:‘Space Mono’,size:11}} },
-y:{
-position:‘left’, grid:{color:‘rgba(255,255,255,0.04)’},
-ticks:{color:’#7a7a9a’,font:{family:‘Space Mono’,size:10},callback:v=>v.toFixed(0)},
-title:{display:true,text:unit,color:’#7a7a9a’,font:{family:‘Space Mono’,size:10}}
-},
-y2:{
-position:‘right’, grid:{drawOnChartArea:false},
-ticks:{color:’#fff’,font:{family:‘Space Mono’,size:10},callback:v=>v.toFixed(1)+’%’},
-title:{display:true,text:‘Op. Margin (%)’,color:’#fff’,font:{family:‘Space Mono’,size:10}}
-}
-}
-}
-});
-}, 50);
+  setTimeout(function() {
+    var ctx = document.getElementById(chartId).getContext('2d');
+    charts[chartId] = new Chart(ctx, {
+      data: {
+        labels: years,
+        datasets: [
+          { type:'bar', label:'매출 (' + unit + ')', data: revenue, backgroundColor: color.bar, borderColor: color.barDark, borderWidth: 1, yAxisID: 'y', order: 2 },
+          { type:'bar', label:'영업이익 (' + unit + ')', data: opInc, backgroundColor: color.barDark, borderColor: color.line, borderWidth: 1, yAxisID: 'y', order: 3 },
+          { type:'line', label:'영업이익률 (%)', data: opMar, borderColor: '#C8A96E', backgroundColor: 'rgba(200,169,110,0.05)', pointBackgroundColor: '#C8A96E', pointBorderColor: '#fff', pointBorderWidth: 2, pointRadius: 5, pointHoverRadius: 7, borderWidth: 2, tension: 0.35, yAxisID: 'y2', order: 1 }
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
+        plugins: {
+          legend: { labels: { color: '#aaa', font: { family: 'Malgun Gothic', size: 11 }, boxWidth: 12, padding: 16 } },
+          tooltip: {
+            backgroundColor: '#1a1610', borderColor: 'rgba(200,169,110,0.3)', borderWidth: 1,
+            titleColor: '#ffffff', bodyColor: '#aaa',
+            titleFont: { family: 'Malgun Gothic', size: 13 },
+            bodyFont: { family: 'Malgun Gothic', size: 11 }, padding: 12,
+            callbacks: {
+              label: function(c) {
+                var v = c.parsed.y; if (v == null) return null;
+                return c.dataset.yAxisID === 'y2' ? ' 영업이익률: ' + v.toFixed(1) + '%' : ' ' + c.dataset.label + ': ' + v.toFixed(1);
+              }
+            }
+          }
+        },
+        scales: {
+          x: { grid: { color: 'rgba(200,169,110,0.05)' }, ticks: { color: '#888', font: { family: 'Malgun Gothic', size: 11 } } },
+          y: { position: 'left', grid: { color: 'rgba(200,169,110,0.05)' }, ticks: { color: '#888', font: { family: 'Malgun Gothic', size: 10 }, callback: function(v) { return v.toFixed(0); } }, title: { display: true, text: unit, color: '#888', font: { family: 'Malgun Gothic', size: 10 } } },
+          y2: { position: 'right', grid: { drawOnChartArea: false }, ticks: { color: '#C8A96E', font: { family: 'Malgun Gothic', size: 10 }, callback: function(v) { return v.toFixed(1) + '%'; } }, title: { display: true, text: '영업이익률 (%)', color: '#C8A96E', font: { family: 'Malgun Gothic', size: 10 } } }
+        }
+      }
+    });
+  }, 50);
 }
 
-// ── Init (after DOM ready) ──────────────────────────────────
-document.addEventListener(‘DOMContentLoaded’, loadSavedKey);
+document.addEventListener('DOMContentLoaded', loadSavedKey);
 </script>
-
 </body>
 </html>
