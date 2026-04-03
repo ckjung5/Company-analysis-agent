@@ -92,7 +92,7 @@ input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(200,169,110,
 <body>
 <div class="wrap">
   <header>
-    <div class="header-tag">AI Agent v2.0</div>
+    <div class="header-tag">AI Agent v2.1</div>
     <h1>재무 인텔리전스</h1>
     <p class="subtitle">기업명을 입력하면 AI가 최근 5년 재무 현황을 비교 분석합니다</p>
   </header>
@@ -225,7 +225,7 @@ async function runAgent() {
   var resultsEl = document.getElementById('results');
   resultsEl.innerHTML = '<div style="padding:40px 0;text-align:center"><div class="skel" style="width:100%;height:60px;margin-bottom:16px"></div><div class="skel" style="width:100%;height:320px;margin-bottom:16px"></div><div class="skel" style="width:100%;height:320px;margin-bottom:16px"></div><div class="skel" style="width:100%;height:320px"></div></div>';
 
-  var prompt = 'You are a financial data analyst. For each company below, provide key financial metrics for fiscal years 2020, 2021, 2022, 2023, and 2024.\n\nCompanies: ' + companies.join(', ') + '\n\nReturn ONLY a valid JSON array (no markdown, no explanation) in this exact format:\n[{"company":"Company Name","ticker":"TICKER","sector":"Sector","currency":"USD","years":[2020,2021,2022,2023,2024],"revenue":[n,n,n,n,n],"operating_income":[n,n,n,n,n],"operating_margin":[n,n,n,n,n],"net_income":[n,n,n,n,n]}]\n\nRules: monetary values in billions. operating_margin is percentage number. Korean companies: KRW trillions, currency field = KRW. null if unavailable. Return ONLY the JSON array.';
+  var prompt = 'You are a financial data analyst. For each company below, provide key financial metrics for fiscal years 2021, 2022, 2023, 2024, and 2025.\n\nCompanies: ' + companies.join(', ') + '\n\nReturn ONLY a valid JSON array (no markdown, no explanation) in this exact format:\n[{"company":"Company Name","ticker":"TICKER","sector":"Sector","currency":"USD","years":[2021,2022,2023,2024,2025],"revenue":[n,n,n,n,n],"operating_income":[n,n,n,n,n],"operating_margin":[n,n,n,n,n],"net_income":[n,n,n,n,n]}]\n\nRules: monetary values in billions. operating_margin is percentage number. Korean companies: KRW trillions, currency field = KRW. null if unavailable. Return ONLY the JSON array.';
 
   try {
     var res = await fetch('https://api.anthropic.com/v1/messages', {
@@ -258,7 +258,7 @@ function fmt(v, unit) {
 
 function renderAll(list) {
   if (!list || !list.length) return;
-  var years = list[0].years || [2020, 2021, 2022, 2023, 2024];
+  var years = list[0].years || [2021, 2022, 2023, 2024, 2025];
   var unit = (list[0].currency === 'KRW') ? '조원' : 'B';
 
   // ── 요약 테이블 ──
