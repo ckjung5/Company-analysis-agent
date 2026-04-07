@@ -6,6 +6,8 @@
 <title>재무 인텔리전스 에이전트</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap');
+
 :root {
   --gold: #C8A96E;
   --gold-dim: rgba(200,169,110,0.15);
@@ -15,30 +17,65 @@
   --surface2: rgba(255,255,255,0.06);
   --up: #4fd1a0;
   --down: #e07060;
+  --actual: #4fd1a0;
+  --estimated: #C8A96E;
+  --forecast: #64a0ff;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { background: var(--bg); color: #ffffff; font-family: 'Malgun Gothic', '맑은 고딕', sans-serif; font-weight: 400; min-height: 100vh; }
-body::before { content: ''; position: fixed; inset: 0; background-image: linear-gradient(rgba(200,169,110,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(200,169,110,0.02) 1px, transparent 1px); background-size: 40px 40px; pointer-events: none; z-index: 0; }
+body {
+  background: var(--bg);
+  color: #ffffff;
+  font-family: 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+  font-weight: 300;
+  min-height: 100vh;
+}
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(200,169,110,0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(200,169,110,0.02) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 0;
+}
 .wrap { max-width: 1100px; margin: 0 auto; padding: 48px 24px 80px; position: relative; z-index: 1; }
+
 header { margin-bottom: 48px; }
-.header-tag { font-size: 11px; color: #aaa; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 12px; }
-h1 { font-size: clamp(28px, 5vw, 44px); font-weight: 400; color: var(--gold); letter-spacing: -0.02em; line-height: 1.1; margin-bottom: 8px; }
-.subtitle { font-size: 14px; color: #888; line-height: 1.7; }
+.header-tag { font-size: 11px; color: #aaa; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 12px; font-family: 'JetBrains Mono', monospace; }
+h1 { font-size: clamp(28px, 5vw, 44px); font-weight: 300; color: var(--gold); letter-spacing: -0.02em; line-height: 1.1; margin-bottom: 8px; }
+.subtitle { font-size: 13px; color: #888; line-height: 1.7; }
+
 .panel { background: var(--surface); border: 1px solid var(--gold-border); border-radius: 10px; padding: 20px 24px; margin-bottom: 16px; position: relative; }
 .panel::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; border-radius: 10px 10px 0 0; background: linear-gradient(90deg, var(--gold), transparent); }
-.field-label { font-size: 11px; color: #888; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 12px; }
+.field-label { font-size: 11px; color: #888; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 12px; font-family: 'JetBrains Mono', monospace; }
+
 .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: stretch; }
 .input-wrap { flex: 1; min-width: 180px; position: relative; }
 .input-wrap .pfx { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 14px; color: var(--gold); pointer-events: none; }
-input[type="text"], input[type="password"] { width: 100%; height: 46px; background: var(--surface2); border: 1px solid var(--gold-border); color: #ffffff; font-family: 'Malgun Gothic', '맑은 고딕', sans-serif; font-size: 13px; padding: 0 14px 0 40px; border-radius: 8px; outline: none; transition: border-color .2s; }
+
+input[type="text"], input[type="password"] {
+  width: 100%; height: 46px;
+  background: var(--surface2);
+  border: 1px solid var(--gold-border);
+  color: #ffffff;
+  font-family: 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+  font-size: 13px;
+  padding: 0 14px 0 40px;
+  border-radius: 8px; outline: none;
+  transition: border-color .2s;
+}
 input::placeholder { color: #555; }
 input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(200,169,110,0.1); }
-.btn { height: 46px; border: none; border-radius: 8px; cursor: pointer; font-family: 'Malgun Gothic', '맑은 고딕', sans-serif; font-size: 13px; transition: all .15s; white-space: nowrap; padding: 0 20px; }
+
+.btn { height: 46px; border: none; border-radius: 8px; cursor: pointer; font-family: 'Noto Sans KR', 'Malgun Gothic', sans-serif; font-size: 13px; transition: all .15s; white-space: nowrap; padding: 0 20px; }
 .btn-ghost { background: var(--surface2); color: #aaa; border: 1px solid var(--gold-border); }
 .btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
-.btn-primary { background: var(--gold); color: #1a1410; font-size: 14px; padding: 0 32px; }
+.btn-primary { background: var(--gold); color: #1a1410; font-size: 14px; font-weight: 500; padding: 0 32px; }
 .btn-primary:hover { background: #d4b87a; transform: translateY(-1px); }
 .btn-primary:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+
 .key-status { display: flex; align-items: center; gap: 6px; font-size: 11px; margin-top: 10px; color: #666; }
 .key-status .dot { width: 5px; height: 5px; border-radius: 50%; background: #666; }
 .key-status.ok { color: var(--up); }
@@ -48,6 +85,23 @@ input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(200,169,110,
 .sec-note { font-size: 11px; color: #555; margin-top: 6px; }
 .hint { margin-top: 10px; font-size: 12px; color: #666; }
 .hint em { color: var(--gold); font-style: normal; }
+
+/* 데이터 신뢰도 안내 */
+.reliability-guide {
+  display: flex; gap: 16px; flex-wrap: wrap;
+  margin-top: 12px; padding-top: 12px;
+  border-top: 1px solid var(--gold-border);
+}
+.rel-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: #888; }
+.badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 10px; font-family: 'JetBrains Mono', monospace;
+  padding: 2px 7px; border-radius: 4px; font-weight: 500;
+}
+.badge-actual   { background: rgba(79,209,160,0.15); color: var(--actual);    border: 1px solid rgba(79,209,160,0.3); }
+.badge-partial  { background: rgba(200,169,110,0.15); color: var(--estimated); border: 1px solid rgba(200,169,110,0.3); }
+.badge-estimate { background: rgba(100,160,255,0.15); color: var(--forecast);  border: 1px solid rgba(100,160,255,0.3); }
+
 #status-bar { display: none; background: var(--surface); border: 1px solid var(--gold-border); border-left: 3px solid var(--gold); padding: 13px 18px; border-radius: 8px; margin-bottom: 20px; font-size: 12px; color: #aaa; }
 .sdot { display: inline-block; width: 6px; height: 6px; background: var(--gold); border-radius: 50%; margin-right: 10px; animation: blink 1s ease-in-out infinite; }
 @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.2} }
@@ -57,44 +111,63 @@ input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(200,169,110,
 /* Summary table */
 .summary-card { background: var(--surface); border: 1px solid var(--gold-border); border-radius: 10px; overflow: hidden; animation: slideUp .3s ease forwards; opacity: 0; }
 @keyframes slideUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
-.summary-head { padding: 16px 24px; background: var(--surface2); border-bottom: 1px solid var(--gold-border); display: flex; align-items: center; gap: 10px; }
+.summary-head { padding: 16px 24px; background: var(--surface2); border-bottom: 1px solid var(--gold-border); display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .summary-head .icon { font-size: 16px; }
 .summary-head h3 { font-size: 14px; font-weight: 400; color: var(--gold); letter-spacing: 0.05em; }
+.summary-head .data-notice { margin-left: auto; font-size: 11px; color: #666; font-family: 'JetBrains Mono', monospace; }
+
 .summary-table { width: 100%; border-collapse: collapse; }
-.summary-table th { padding: 10px 18px; font-size: 11px; color: #888; letter-spacing: 0.08em; text-transform: uppercase; border-bottom: 1px solid var(--gold-border); text-align: left; background: var(--surface); }
+.summary-table th { padding: 10px 18px; font-size: 11px; color: #888; letter-spacing: 0.08em; text-transform: uppercase; border-bottom: 1px solid var(--gold-border); text-align: left; background: var(--surface); font-family: 'JetBrains Mono', monospace; }
 .summary-table td { padding: 11px 18px; font-size: 13px; border-bottom: 1px solid rgba(200,169,110,0.07); }
 .summary-table tr:last-child td { border-bottom: none; }
 .summary-table tr:hover td { background: rgba(200,169,110,0.04); }
 .td-company { color: #fff; font-size: 13px; }
-.td-ticker { color: var(--gold); font-size: 11px; }
-.td-num { color: #ddd; text-align: right; }
-.td-up { color: var(--up); text-align: right; }
-.td-down { color: var(--down); text-align: right; }
+.td-ticker { color: var(--gold); font-size: 11px; font-family: 'JetBrains Mono', monospace; }
+.td-num { color: #ddd; text-align: right; font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+.td-up   { color: var(--up);   text-align: right; font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+.td-down { color: var(--down); text-align: right; font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+.td-note { font-size: 11px; color: #666; }
 
 /* Chart cards */
 .chart-card { background: var(--surface); border: 1px solid var(--gold-border); border-radius: 10px; overflow: hidden; animation: slideUp .4s ease forwards; opacity: 0; }
 .chart-head { padding: 16px 24px; background: var(--surface2); border-bottom: 1px solid var(--gold-border); display: flex; align-items: center; gap: 10px; }
 .chart-head h3 { font-size: 14px; font-weight: 400; color: #fff; }
-.chart-head .unit-badge { font-size: 11px; color: #888; background: rgba(255,255,255,0.05); border: 1px solid var(--gold-border); border-radius: 4px; padding: 2px 8px; margin-left: auto; }
+.chart-head .unit-badge { font-size: 11px; color: #888; background: rgba(255,255,255,0.05); border: 1px solid var(--gold-border); border-radius: 4px; padding: 2px 8px; margin-left: auto; font-family: 'JetBrains Mono', monospace; }
 .chart-body { padding: 24px; height: 320px; }
+
+/* 연도별 신뢰도 범례 */
+.year-reliability { padding: 0 24px 16px; display: flex; gap: 8px; flex-wrap: wrap; }
 
 .empty { text-align: center; padding: 80px 24px; color: #555; }
 .empty .icon { font-size: 40px; margin-bottom: 14px; opacity: .3; }
-.empty h3 { font-size: 17px; font-weight: 400; color: #aaa; margin-bottom: 8px; }
+.empty h3 { font-size: 17px; font-weight: 300; color: #aaa; margin-bottom: 8px; }
 .empty p { font-size: 12px; max-width: 300px; margin: 0 auto; line-height: 1.7; }
 
 .skel { background: linear-gradient(90deg, var(--surface2) 25%, rgba(200,169,110,0.08) 50%, var(--surface2) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 4px; }
 @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
 
-@media (max-width: 600px) { .row { flex-direction: column; } .btn-primary { width: 100%; } .chart-body { height: 240px; } }
+/* 데이터 출처 카드 */
+.source-card { background: var(--surface); border: 1px solid var(--gold-border); border-radius: 10px; padding: 16px 24px; animation: slideUp .5s ease forwards; opacity: 0; }
+.source-card h4 { font-size: 12px; color: #888; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 12px; font-family: 'JetBrains Mono', monospace; }
+.source-list { display: flex; flex-direction: column; gap: 8px; }
+.source-item { display: flex; align-items: flex-start; gap: 10px; font-size: 12px; }
+.source-company { color: var(--gold); min-width: 120px; font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+.source-detail { color: #888; line-height: 1.6; }
+
+@media (max-width: 600px) {
+  .row { flex-direction: column; }
+  .btn-primary { width: 100%; }
+  .chart-body { height: 240px; }
+  .reliability-guide { gap: 10px; }
+}
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
-    <div class="header-tag">AI Agent v2.2</div>
+    <div class="header-tag">AI Agent v3.0 · 데이터 신뢰도 표시</div>
     <h1>재무 인텔리전스</h1>
-    <p class="subtitle">기업명을 입력하면 AI가 최근 5년 재무 현황을 비교 분석합니다</p>
+    <p class="subtitle">기업명을 입력하면 AI가 최근 5년 재무 현황을 비교 분석합니다<br>실제 공시 기준 데이터와 추정값을 구분하여 표시합니다</p>
   </header>
 
   <div class="panel" id="apikey-section">
@@ -124,6 +197,11 @@ input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(200,169,110,
       <button class="btn btn-primary" id="run-btn" onclick="runAgent()">▶ 비교 분석</button>
     </div>
     <div class="hint">예: <em>삼성전자, SK하이닉스</em> &nbsp;|&nbsp; <em>Apple, Microsoft, Google</em> &nbsp;|&nbsp; <em>NVIDIA, AMD, Intel</em></div>
+    <div class="reliability-guide">
+      <div class="rel-item"><span class="badge badge-actual">ACTUAL</span> 실제 공시 확정치</div>
+      <div class="rel-item"><span class="badge badge-partial">PARTIAL</span> 부분 공시 + 추정</div>
+      <div class="rel-item"><span class="badge badge-estimate">ESTIMATE</span> 애널리스트 컨센서스</div>
+    </div>
   </div>
 
   <div id="status-bar"><span class="sdot"></span><span id="status-text">AI Agent 분석 중...</span></div>
@@ -150,6 +228,7 @@ var COLORS = [
 
 var charts = {};
 
+// ── API Key 관리 ──
 function loadSavedKey() {
   try {
     var k = localStorage.getItem('finscope_api_key') || '';
@@ -158,7 +237,6 @@ function loadSavedKey() {
     setKeyStatus(true);
   } catch(e) {}
 }
-
 function saveKey() {
   var k = document.getElementById('api-key-input').value.trim();
   if (!k) { alert('API Key를 입력해 주세요.'); return; }
@@ -166,25 +244,21 @@ function saveKey() {
   try { localStorage.setItem('finscope_api_key', k); } catch(e) {}
   setKeyStatus(true);
 }
-
 function onKeyInput() {
   setKeyStatus(document.getElementById('api-key-input').value.trim().startsWith('sk-ant-'));
 }
-
 function setKeyStatus(ok) {
   var el = document.getElementById('key-status');
   var txt = document.getElementById('key-status-text');
   el.className = 'key-status ' + (ok ? 'ok' : 'warn');
   txt.textContent = ok ? 'API Key 확인됨 — 분석 준비 완료' : 'API Key가 입력되지 않았습니다';
 }
-
 function toggleKey() {
   var inp = document.getElementById('api-key-input');
   var btn = document.getElementById('toggle-btn');
   inp.type = inp.type === 'password' ? 'text' : 'password';
   btn.textContent = inp.type === 'password' ? 'SHOW' : 'HIDE';
 }
-
 function getApiKey() {
   var v = document.getElementById('api-key-input').value.trim();
   if (v) return v;
@@ -196,11 +270,81 @@ function setStatus(msg, show) {
   document.getElementById('status-text').textContent = msg;
   bar.style.display = (show === false) ? 'none' : 'block';
 }
-
 function setError(msg) {
   var box = document.getElementById('error-box');
   box.textContent = msg ? '⚠ ' + msg : '';
   box.style.display = msg ? 'block' : 'none';
+}
+
+// ── 핵심: 개선된 프롬프트 ──
+function buildPrompt(companies) {
+  var today = new Date();
+  var todayStr = today.getFullYear() + '년 ' + (today.getMonth()+1) + '월 ' + today.getDate() + '일';
+
+  return `You are a financial data specialist. Today is ${todayStr}.
+
+Your task: Provide ACCURATE financial data for the companies below based on OFFICIAL FILINGS and DISCLOSED RESULTS only.
+
+Companies: ${companies.join(', ')}
+
+=== STRICT DATA ACCURACY RULES ===
+
+1. DATA SOURCES (in priority order):
+   - Korean companies: Use data from DART (dart.fss.or.kr), KRX official disclosures, and major Korean brokerage analyst consensus (삼성증권, 미래에셋, KB증권, 한국투자증권)
+   - Global companies: Use data from SEC filings (10-K, 20-F), official IR pages, Bloomberg/Reuters consensus
+   - NEVER fabricate or interpolate numbers. Only use data you are highly confident about.
+
+2. CURRENCY RULES:
+   - Korean companies (KOSPI/KOSDAQ listed): KRW, unit = 조원 (1조 = 1 trillion KRW)
+   - Japanese companies: JPY billions (십억엔)
+   - US/Global companies: USD billions
+   - Do NOT mix currencies within one company's data
+
+3. FISCAL YEAR RULES:
+   - Use the company's official fiscal year end (삼성전자, SK하이닉스 = Dec 31; Apple = Sep 30; etc.)
+   - For each year, always specify which fiscal year period it covers
+
+4. 2025 DATA HANDLING — BE PRECISE:
+   - If FULL YEAR 2025 results have been officially disclosed → data_quality: "actual", specify "FY2025 actual"
+   - If PARTIAL 2025 results available (e.g. Q1-Q3 reported) → data_quality: "partial", note which quarters, do NOT extrapolate silently
+   - If only Q1 2025 available → data_quality: "partial_q1"
+   - If NO 2025 data disclosed yet → data_quality: "estimate", use sell-side consensus estimate, note it clearly
+   - NEVER silently fill in estimated numbers as if they were actual
+
+5. KNOWN ACCURACY CHECKPOINTS (verify your numbers against these):
+   - SK하이닉스 FY2024: Revenue ~66조원, Operating income ~23조원 (매우 강한 HBM 수혜)
+   - SK하이닉스 FY2023: Revenue ~32.8조원, Operating income 적자 약 -7.7조원
+   - 삼성전자 FY2024: Revenue ~300조원 수준, 반도체 부진
+   - NVIDIA FY2025 (ended Jan 2025): Revenue ~$130B, record year
+   - Apple FY2024 (ended Sep 2024): Revenue ~$391B
+
+6. OPERATING MARGIN: Calculate as (operating_income / revenue * 100). Double-check this calculation.
+
+7. If you are UNCERTAIN about a specific number, set it to null rather than guessing.
+
+=== OUTPUT FORMAT ===
+Return ONLY a valid JSON array (no markdown, no explanation, no backticks):
+
+[
+  {
+    "company": "회사명 (공식명칭)",
+    "ticker": "티커심볼.거래소",
+    "sector": "업종",
+    "currency": "KRW",
+    "currency_unit": "조원",
+    "fiscal_year_end": "12월",
+    "years": [2021, 2022, 2023, 2024, 2025],
+    "revenue": [숫자 or null, ...],
+    "operating_income": [숫자 or null, ...],
+    "operating_margin": [숫자 or null, ...],
+    "net_income": [숫자 or null, ...],
+    "data_quality": ["actual","actual","actual","actual","estimate"],
+    "data_sources": ["DART 공시","DART 공시","DART 공시","DART 공시","한투증권 컨센서스"],
+    "notes": "2025는 2025년 1월 발표된 잠정 실적 기준. 2025 full year는 애널리스트 추정치."
+  }
+]
+
+CRITICAL: Return ONLY the JSON array. No other text.`;
 }
 
 async function runAgent() {
@@ -218,31 +362,53 @@ async function runAgent() {
   var btn = document.getElementById('run-btn');
   btn.disabled = true;
   setError('');
-  setStatus(companies.length + '개 기업 재무 데이터 수집 중...');
+  setStatus(companies.length + '개 기업 공시 데이터 수집 중... (약 10~20초 소요)');
   Object.values(charts).forEach(function(c){ c.destroy(); });
   charts = {};
 
   var resultsEl = document.getElementById('results');
-  resultsEl.innerHTML = '<div style="padding:40px 0;text-align:center"><div class="skel" style="width:100%;height:60px;margin-bottom:16px"></div><div class="skel" style="width:100%;height:320px;margin-bottom:16px"></div><div class="skel" style="width:100%;height:320px;margin-bottom:16px"></div><div class="skel" style="width:100%;height:320px"></div></div>';
+  resultsEl.innerHTML = '<div style="padding:40px 0"><div class="skel" style="width:100%;height:60px;margin-bottom:16px"></div><div class="skel" style="width:100%;height:320px;margin-bottom:16px"></div><div class="skel" style="width:100%;height:320px;margin-bottom:16px"></div><div class="skel" style="width:100%;height:320px"></div></div>';
 
-  var prompt = 'You are a financial data analyst with access to the latest available data. For each company below, provide key financial metrics for fiscal years 2021, 2022, 2023, 2024, and 2025.\n\nCompanies: ' + companies.join(', ') + '\n\nIMPORTANT RULES FOR 2025 DATA:\n- If the company has already reported full-year 2025 results, use those actual figures.\n- If only partial 2025 results are available (e.g. Q1-Q3), extrapolate to estimate the full year and set note to "2025 estimated".\n- If no 2025 data is available at all, provide a reasonable analyst consensus estimate based on growth trends and set note to "2025 analyst estimate".\n- Never use null for 2025. Always provide either actual or estimated values.\n\nReturn ONLY a valid JSON array (no markdown, no explanation) in this exact format:\n[{"company":"Company Name","ticker":"TICKER","sector":"Sector","currency":"USD","years":[2021,2022,2023,2024,2025],"revenue":[n,n,n,n,n],"operating_income":[n,n,n,n,n],"operating_margin":[n,n,n,n,n],"net_income":[n,n,n,n,n],"note":"2025 actual or estimated"}]\n\nAdditional rules: monetary values in billions. operating_margin is percentage number. Korean companies: KRW trillions, currency field = KRW. Return ONLY the JSON array.';
+  var prompt = buildPrompt(companies);
 
   try {
     var res = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
-      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 4000, messages: [{ role: 'user', content: prompt }] })
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 6000,
+        system: 'You are a financial data accuracy specialist. You only report numbers you are highly confident about from official filings. You clearly distinguish between actual disclosed results and estimates. You never fabricate financial data.',
+        messages: [{ role: 'user', content: prompt }]
+      })
     });
-    if (!res.ok) { var e = await res.json(); throw new Error((e.error && e.error.message) || ('HTTP ' + res.status)); }
+
+    if (!res.ok) {
+      var e = await res.json();
+      throw new Error((e.error && e.error.message) || ('HTTP ' + res.status));
+    }
+
     var data = await res.json();
     var text = '';
-    for (var i = 0; i < data.content.length; i++) { if (data.content[i].type === 'text') text += data.content[i].text; }
-    var s = text.indexOf('['); var en = text.lastIndexOf(']');
-    if (s === -1 || en === -1) throw new Error('응답에서 JSON을 찾을 수 없습니다.');
+    for (var i = 0; i < data.content.length; i++) {
+      if (data.content[i].type === 'text') text += data.content[i].text;
+    }
+
+    // JSON 파싱
+    var s = text.indexOf('[');
+    var en = text.lastIndexOf(']');
+    if (s === -1 || en === -1) throw new Error('응답에서 JSON을 찾을 수 없습니다. 다시 시도해 주세요.');
     var financials = JSON.parse(text.substring(s, en + 1));
+
     setStatus('', false);
     resultsEl.innerHTML = '';
     renderAll(financials);
+
   } catch(err) {
     setStatus('', false);
     resultsEl.innerHTML = '';
@@ -251,78 +417,135 @@ async function runAgent() {
   btn.disabled = false;
 }
 
-function fmt(v, unit) {
-  if (v == null) return 'N/A';
-  return v.toFixed(1) + ' ' + unit;
+// ── 신뢰도 배지 ──
+function qualityBadge(q) {
+  if (!q) return '';
+  if (q === 'actual')      return '<span class="badge badge-actual">ACTUAL</span>';
+  if (q.startsWith('partial')) return '<span class="badge badge-partial">PARTIAL</span>';
+  return '<span class="badge badge-estimate">ESTIMATE</span>';
+}
+
+function qualityColor(q) {
+  if (!q) return 'rgba(255,255,255,0.4)';
+  if (q === 'actual')           return 'rgba(79,209,160,0.9)';
+  if (q.startsWith('partial'))  return 'rgba(200,169,110,0.9)';
+  return 'rgba(100,160,255,0.9)';
 }
 
 function renderAll(list) {
   if (!list || !list.length) return;
   var years = list[0].years || [2021, 2022, 2023, 2024, 2025];
-  var unit = (list[0].currency === 'KRW') ? '조원' : 'B';
 
   // ── 요약 테이블 ──
+  var lastYear = years[years.length - 1];
   var summaryCard = document.createElement('div');
   summaryCard.className = 'summary-card';
   summaryCard.style.animationDelay = '0s';
-  var lastYear = years[years.length - 1];
-  var thead = '<tr><th>기업</th><th style="text-align:right">매출 (' + lastYear + ')</th><th style="text-align:right">전년대비</th><th style="text-align:right">영업이익률</th><th style="text-align:right">순이익</th></tr>';
+
+  var thead = '<tr>' +
+    '<th>기업</th>' +
+    '<th style="text-align:right">매출 (' + lastYear + ')</th>' +
+    '<th style="text-align:right">전년대비</th>' +
+    '<th style="text-align:right">영업이익률</th>' +
+    '<th style="text-align:right">순이익</th>' +
+    '<th style="text-align:center">데이터</th>' +
+    '</tr>';
+
   var tbody = list.map(function(d) {
-    var rev = d.revenue || [];
-    var mar = d.operating_margin || [];
-    var net = d.net_income || [];
-    var cur = d.currency === 'KRW' ? '조원' : 'B';
-    var lastRev = rev[rev.length-1];
-    var prevRev = rev[rev.length-2];
-    var growth = (prevRev && lastRev != null) ? (((lastRev - prevRev) / prevRev) * 100).toFixed(1) : null;
-    var lastMar = mar[mar.length-1];
-    var lastNet = net[net.length-1];
-    var growthClass = growth > 0 ? 'td-up' : 'td-down';
-    var growthStr = growth != null ? (growth > 0 ? '+' : '') + growth + '%' : 'N/A';
-    var marClass = lastMar > 15 ? 'td-up' : lastMar < 5 ? 'td-down' : 'td-num';
+    var rev  = d.revenue || [];
+    var mar  = d.operating_margin || [];
+    var net  = d.net_income || [];
+    var qual = d.data_quality || [];
+    var cur  = d.currency_unit || (d.currency === 'KRW' ? '조원' : 'B');
+    var lastRev  = rev[rev.length-1];
+    var prevRev  = rev[rev.length-2];
+    var lastQ    = qual[qual.length-1] || 'estimate';
+    var growth   = (prevRev && lastRev != null) ? (((lastRev - prevRev) / prevRev) * 100).toFixed(1) : null;
+    var lastMar  = mar[mar.length-1];
+    var lastNet  = net[net.length-1];
+    var growthClass = (growth > 0) ? 'td-up' : 'td-down';
+    var growthStr   = growth != null ? (growth > 0 ? '+' : '') + growth + '%' : 'N/A';
+    var marClass    = lastMar > 15 ? 'td-up' : lastMar < 5 ? 'td-down' : 'td-num';
     return '<tr>' +
-      '<td><span class="td-company">' + d.company + '</span> <span class="td-ticker">' + (d.ticker || '') + '</span></td>' +
+      '<td><div class="td-company">' + d.company + '</div><div class="td-ticker">' + (d.ticker || '') + ' · ' + (d.fiscal_year_end || '') + '</div></td>' +
       '<td class="td-num">' + (lastRev != null ? lastRev.toFixed(1) + ' ' + cur : 'N/A') + '</td>' +
       '<td class="' + growthClass + '">' + growthStr + '</td>' +
       '<td class="' + marClass + '">' + (lastMar != null ? lastMar.toFixed(1) + '%' : 'N/A') + '</td>' +
       '<td class="td-num">' + (lastNet != null ? lastNet.toFixed(1) + ' ' + cur : 'N/A') + '</td>' +
+      '<td style="text-align:center">' + qualityBadge(lastQ) + '</td>' +
     '</tr>';
   }).join('');
 
   summaryCard.innerHTML =
-    '<div class="summary-head"><span class="icon">📋</span><h3>최신 재무 요약 (' + lastYear + ')</h3></div>' +
+    '<div class="summary-head">' +
+      '<span class="icon">📋</span>' +
+      '<h3>최신 재무 요약 (' + lastYear + ')</h3>' +
+      '<span class="data-notice">출처: DART · SEC · 애널리스트 컨센서스</span>' +
+    '</div>' +
     '<div style="overflow-x:auto"><table class="summary-table"><thead>' + thead + '</thead><tbody>' + tbody + '</tbody></table></div>';
   document.getElementById('results').appendChild(summaryCard);
 
   // ── 3개 비교 차트 ──
   var chartDefs = [
-    { key: 'revenue',          label: '매출액 비교',    icon: '📊', yLabel: unit },
-    { key: 'operating_income', label: '영업이익 비교',  icon: '💰', yLabel: unit },
-    { key: 'operating_margin', label: '영업이익률 비교', icon: '📈', yLabel: '%', isPercent: true },
+    { key: 'revenue',          label: '매출액 비교',     icon: '📊', isPercent: false },
+    { key: 'operating_income', label: '영업이익 비교',   icon: '💰', isPercent: false },
+    { key: 'operating_margin', label: '영업이익률 비교', icon: '📈', isPercent: true  },
   ];
 
   chartDefs.forEach(function(def, ci) {
+    var unit = '';
+    if (!def.isPercent) {
+      var currencies = list.map(function(d){ return d.currency_unit || (d.currency === 'KRW' ? '조원' : 'B'); });
+      unit = currencies[0];
+      if (currencies.some(function(c){ return c !== currencies[0]; })) unit = '혼합통화';
+    } else {
+      unit = '%';
+    }
+
     var card = document.createElement('div');
     card.className = 'chart-card';
     card.style.animationDelay = ((ci + 1) * 0.12) + 's';
     var chartId = 'chart-' + ci;
+
+    // 연도별 신뢰도 배지 (첫번째 기업 기준)
+    var firstComp = list[0];
+    var qualArr = firstComp.data_quality || [];
+    var yearBadgesHtml = years.map(function(yr, yi) {
+      var q = qualArr[yi] || 'estimate';
+      return '<span style="font-size:10px;color:#666;font-family:JetBrains Mono,monospace">' + yr + ' ' + qualityBadge(q) + '</span>';
+    }).join('');
+
     card.innerHTML =
-      '<div class="chart-head"><h3>' + def.icon + ' ' + def.label + '</h3><span class="unit-badge">단위: ' + def.yLabel + '</span></div>' +
+      '<div class="chart-head"><h3>' + def.icon + ' ' + def.label + '</h3><span class="unit-badge">단위: ' + unit + '</span></div>' +
+      '<div class="year-reliability">' + yearBadgesHtml + '</div>' +
       '<div class="chart-body"><canvas id="' + chartId + '"></canvas></div>';
     document.getElementById('results').appendChild(card);
 
     setTimeout(function(id, d, companies) {
       return function() {
         var ctx = document.getElementById(id).getContext('2d');
+
         var datasets = companies.map(function(comp, i) {
           var vals = comp[d.key] || [];
           var color = COLORS[i % COLORS.length];
+          var qualArr = comp.data_quality || [];
+
+          // 연도별 신뢰도에 따라 색상 투명도 조절
+          var bgColors = vals.map(function(v, yi) {
+            var q = qualArr[yi] || 'estimate';
+            var alpha = (q === 'actual') ? 0.8 : (q.startsWith('partial') ? 0.55 : 0.35);
+            var base = COLORS[i % COLORS.length].line;
+            return base.replace('#', '') !== base
+              ? base + Math.round(alpha * 255).toString(16).padStart(2,'0')
+              : color.bar.replace('0.7', alpha.toFixed(2));
+          });
+
           return {
             label: comp.company,
             data: vals,
-            backgroundColor: color.bar,
+            backgroundColor: bgColors,
             borderColor: color.line,
-            borderWidth: 2,
+            borderWidth: 1.5,
             borderRadius: 4,
           };
         });
@@ -336,7 +559,7 @@ function renderAll(list) {
             interaction: { mode: 'index', intersect: false },
             plugins: {
               legend: {
-                labels: { color: '#aaa', font: { family: 'Malgun Gothic', size: 11 }, boxWidth: 14, padding: 16 }
+                labels: { color: '#aaa', font: { family: 'Noto Sans KR', size: 11 }, boxWidth: 14, padding: 16 }
               },
               tooltip: {
                 backgroundColor: '#1a1610',
@@ -344,60 +567,89 @@ function renderAll(list) {
                 borderWidth: 1,
                 titleColor: '#ffffff',
                 bodyColor: '#aaa',
-                titleFont: { family: 'Malgun Gothic', size: 13 },
-                bodyFont: { family: 'Malgun Gothic', size: 11 },
                 padding: 12,
                 callbacks: {
+                  afterTitle: function(items) {
+                    var yi = items[0].dataIndex;
+                    var labels = [];
+                    companies.forEach(function(comp) {
+                      var q = (comp.data_quality || [])[yi] || 'estimate';
+                      var qLabel = q === 'actual' ? '✓ 공시확정' : q.startsWith('partial') ? '△ 부분공시' : '~ 추정치';
+                      labels.push(comp.company + ': ' + qLabel);
+                    });
+                    return labels;
+                  },
                   label: function(c) {
                     var v = c.parsed.y;
                     if (v == null) return null;
-                    return ' ' + c.dataset.label + ': ' + v.toFixed(1) + (d.isPercent ? '%' : ' ' + d.yLabel);
+                    var comp = companies[c.datasetIndex];
+                    var unit2 = d.isPercent ? '%' : (comp.currency_unit || 'B');
+                    return ' ' + c.dataset.label + ': ' + v.toFixed(1) + ' ' + unit2;
                   }
                 }
-              },
-              datalabels: false
+              }
             },
             scales: {
               x: {
                 grid: { color: 'rgba(200,169,110,0.05)' },
-                ticks: { color: '#888', font: { family: 'Malgun Gothic', size: 11 } }
+                ticks: { color: '#888', font: { size: 11 } }
               },
               y: {
                 grid: { color: 'rgba(200,169,110,0.05)' },
                 ticks: {
                   color: '#888',
-                  font: { family: 'Malgun Gothic', size: 10 },
+                  font: { size: 10 },
                   callback: function(v) { return d.isPercent ? v.toFixed(1) + '%' : v.toFixed(0); }
-                },
-                title: { display: true, text: def.yLabel, color: '#888', font: { family: 'Malgun Gothic', size: 10 } }
+                }
               }
             }
           }
         });
 
-        // 숫자 레이블 플러그인 (Chart.js 내장 후처리)
+        // 숫자 레이블
         var originalDraw = charts[id].draw.bind(charts[id]);
         charts[id].draw = function() {
           originalDraw();
-          var chartInstance = charts[id];
-          var cv = chartInstance.ctx;
-          cv.font = '10px Malgun Gothic';
-          cv.textAlign = 'center';
-          cv.textBaseline = 'bottom';
-          chartInstance.data.datasets.forEach(function(dataset, di) {
-            var meta = chartInstance.getDatasetMeta(di);
+          var ci2 = charts[id];
+          var cv = ci2.ctx;
+          ci2.data.datasets.forEach(function(dataset, di) {
+            var meta = ci2.getDatasetMeta(di);
+            var comp = companies[di];
+            var qualArr2 = comp.data_quality || [];
             meta.data.forEach(function(bar, index) {
               var val = dataset.data[index];
               if (val == null) return;
               var label = d.isPercent ? val.toFixed(1) + '%' : val.toFixed(1);
-              cv.fillStyle = '#ffffff';
-              cv.fillText(label, bar.x, bar.y - 4);
+              var q = qualArr2[index] || 'estimate';
+              cv.font = '9px JetBrains Mono, monospace';
+              cv.textAlign = 'center';
+              cv.textBaseline = 'bottom';
+              cv.fillStyle = qualityColor(q);
+              cv.fillText(label, bar.x, bar.y - 3);
             });
           });
         };
       };
     }(chartId, def, list), ci * 80 + 50);
   });
+
+  // ── 데이터 출처 카드 ──
+  var srcCard = document.createElement('div');
+  srcCard.className = 'source-card';
+  srcCard.style.animationDelay = '0.5s';
+  var srcHtml = list.map(function(d) {
+    var sources = d.data_sources || [];
+    var srcStr = sources.length ? sources.join(' → ') : '정보 없음';
+    return '<div class="source-item">' +
+      '<span class="source-company">' + d.ticker + '</span>' +
+      '<span class="source-detail">' + srcStr + (d.notes ? ' | ' + d.notes : '') + '</span>' +
+    '</div>';
+  }).join('');
+  srcCard.innerHTML = '<h4>📌 데이터 출처 및 비고</h4><div class="source-list">' + srcHtml + '</div>' +
+    '<div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--gold-border);font-size:11px;color:#555">' +
+    '⚠ AI가 학습 데이터 기준으로 제공한 정보입니다. 투자 결정 전 DART(dart.fss.or.kr) 또는 증권사 공식 자료를 반드시 확인하세요.' +
+    '</div>';
+  document.getElementById('results').appendChild(srcCard);
 }
 
 document.addEventListener('DOMContentLoaded', loadSavedKey);
