@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>메모리 반도체 기술 경쟁력 에이전트</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --gold: #C8A96E;
+  --gold-dim: rgba(200,169,110,0.15);
+  --gold-border: rgba(200,169,110,0.25);
+  --bg: #0e0c09;
+  --surface: rgba(255,255,255,0.03);
+  --surface2: rgba(255,255,255,0.06);
+  --up: #4fd1a0;
+  --down: #e07060;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: #ffffff;
+  font-family: 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+  font-weight: 300;
+  min-height: 100vh;
+}
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(200,169,110,0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(200,169,110,0.02) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 0;
+}
+.wrap { max-width: 1100px; margin: 0 auto; padding: 48px 24px 80px; position: relative; z-index: 1; }
+
+header { margin-bottom: 40px; }
+.header-tag { font-size: 11px; color: #aaa; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 12px; font-family: 'JetBrains Mono', monospace; }
+h1 { font-size: clamp(26px, 4.6vw, 40px); font-weight: 300; color: var(--gold); letter-spacing: -0.02em; line-height: 1.2; margin-bottom: 8px; }
+.subtitle { font-size: 13px; color: #888; line-height: 1.7; }
+
+.panel { background: var(--surface); border: 1px solid var(--gold-border); border-radius: 10px; padding: 20px 24px; margin-bottom: 16px; position: relative; }
+.panel::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; border-radius: 10px 10px 0 0; background: linear-gradient(90deg, var(--gold), transparent); }
+.field-label { font-size: 11px; color: #888; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 12px; font-family: 'JetBrains Mono', monospace; }
+
+.row { display: flex; gap: 10px; flex-wrap: wrap; align-items: stretch; }
+.input-wrap { flex: 1; min-width: 180px; position: relative; }
+.input-wrap .pfx { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 14px; color: var(--gold); pointer-events: none; }
+
+input[type="text"], input[type="password"] {
+  width: 100%; height: 46px;
+  background: var(--surface2);
+  border: 1px solid var(--gold-border);
+  color: #ffffff;
+  font-family: 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+  font-size: 13px;
+  padding: 0 14px 0 40px;
+  border-radius: 8px; outline: none;
+  transition: border-color .2s;
+}
+input::placeholder { color: #555; }
+input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(200,169,110,0.1); }
+
+.btn { height: 46px; border: none; border-radius: 8px; cursor: pointer; font-family: 'Noto Sans KR', 'Malgun Gothic', sans-serif; font-size: 13px; transition: all .15s; white-space: nowrap; padding: 0 20px; }
+.btn-ghost { background: var(--surface2); color: #aaa; border: 1px solid var(--gold-border); }
+.btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
+.btn-primary { background: var(--gold); color: #1a1410; font-size: 14px; font-weight: 500; padding: 0 32px; }
+.btn-primary:hover { background: #d4b87a; transform: translateY(-1px); }
+.btn-primary:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+
+.key-status { display: flex; align-items: center; gap: 6px; font-size: 11px; margin-top: 10px; color: #666; }
+.key-status .dot { width: 5px; height: 5px; border-radius: 50%; background: #666; }
+.key-status.ok { color: var(--up); }
+.key-status.ok .dot { background: var(--up); }
+.key-status.warn { color: var(--down); }
+.key-status.warn .dot { background: var(--down); }
+.sec-note { font-size: 11px; color: #555; margin-top: 6px; }
+
+.players { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 4px; }
+.player-chip { display: flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 20px; background: var(--surface2); border: 1px solid var(--gold-border); font-size: 12px; color: #ddd; }
+.player-chip .sw { width: 8px; height: 8px; border-radius: 50%; }
+
+#status-bar { display: none; background: var(--surface); border: 1px solid var(--gold-border); border-left: 3px solid var(--gold); padding: 13px 18px; border-radius: 8px; margin-bottom: 20px; font-size: 12px; color: #aaa; }
+.sdot { display: inline-block; width: 6px; height: 6px; background: var(--gold); border-radius: 50%; margin-right: 10px; animation: blink 1s ease-in-out infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.2} }
+#error-box { display: none; background: rgba(224,112,96,0.08); border: 1px solid rgba(224,112,96,0.3); border-left: 3px solid var(--down); padding: 13px 18px; border-radius: 8px; margin-bottom: 20px; font-size: 12px; color: var(--down); }
+#results { display: flex; flex-direction: column; gap: 24px; }
+
+.card { background: var(--surface); border: 1px solid var(--gold-border); border-radius: 10px; overflow: hidden; animation: slideUp .4s ease forwards; opacity: 0; }
+@keyframes slideUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+.card-head { padding: 16px 24px; background: var(--surface2); border-bottom: 1px solid var(--gold-border); display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.card-head .icon { font-size: 16px; }
+.card-head h3 { font-size: 14px; font-weight: 400; color: var(--gold); letter-spacing: 0.05em; }
+.card-head .as-of { margin-left: auto; font-size: 11px; color: #666; font-family: 'JetBrains Mono', monospace; }
+
+/* radar */
+.chart-body { padding: 24px; height: 380px; }
+
+/* summary text */
+.summary-body { padding: 20px 24px; font-size: 13px; line-height: 1.9; color: #ddd; white-space: pre-line; }
+
+/* comparison table */
+.cmp-table { width: 100%; border-collapse: collapse; }
+.cmp-table th { padding: 10px 16px; font-size: 11px; color: #888; letter-spacing: 0.06em; text-transform: uppercase; border-bottom: 1px solid var(--gold-border); text-align: left; background: var(--surface); font-family: 'JetBrains Mono', monospace; white-space: nowrap; }
+.cmp-table td { padding: 11px 16px; font-size: 12.5px; border-bottom: 1px solid rgba(200,169,110,0.07); vertical-align: top; line-height: 1.6; }
+.cmp-table tr:last-child td { border-bottom: none; }
+.cmp-table tr:hover td { background: rgba(200,169,110,0.04); }
+.td-company { color: #fff; font-size: 13px; font-weight: 400; }
+.td-ticker { color: var(--gold); font-size: 10.5px; font-family: 'JetBrains Mono', monospace; margin-top: 2px; }
+.td-gold { color: var(--gold); }
+
+/* per-company detail cards */
+.grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; }
+.co-card { background: var(--surface); border: 1px solid var(--gold-border); border-radius: 10px; padding: 20px 22px; animation: slideUp .4s ease forwards; opacity: 0; }
+.co-title { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+.co-title .sw { width: 10px; height: 10px; border-radius: 50%; }
+.co-name { font-size: 16px; color: #fff; }
+.co-ticker { font-size: 11px; color: var(--gold); font-family: 'JetBrains Mono', monospace; margin-bottom: 14px; }
+.co-row { margin-bottom: 12px; }
+.co-row .lbl { font-size: 10.5px; color: #888; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 4px; font-family: 'JetBrains Mono', monospace; }
+.co-row .val { font-size: 13px; color: #ddd; line-height: 1.7; }
+.score-bars { display: flex; flex-direction: column; gap: 6px; margin-top: 6px; }
+.score-bar-row { display: flex; align-items: center; gap: 8px; }
+.score-bar-label { font-size: 10.5px; color: #888; width: 92px; flex-shrink: 0; }
+.score-bar-track { flex: 1; height: 6px; background: var(--surface2); border-radius: 3px; overflow: hidden; }
+.score-bar-fill { height: 100%; border-radius: 3px; }
+.score-bar-val { font-size: 10.5px; color: #aaa; font-family: 'JetBrains Mono', monospace; width: 24px; text-align: right; }
+
+.source-card { padding: 16px 24px; }
+.source-card h4 { font-size: 12px; color: #888; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 12px; font-family: 'JetBrains Mono', monospace; }
+
+.empty { text-align: center; padding: 80px 24px; color: #555; }
+.empty .icon { font-size: 40px; margin-bottom: 14px; opacity: .3; }
+.empty h3 { font-size: 17px; font-weight: 300; color: #aaa; margin-bottom: 8px; }
+.empty p { font-size: 12px; max-width: 380px; margin: 0 auto; line-height: 1.7; }
+
+.skel { background: linear-gradient(90deg, var(--surface2) 25%, rgba(200,169,110,0.08) 50%, var(--surface2) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 4px; }
+@keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+@media (max-width: 600px) {
+  .row { flex-direction: column; }
+  .btn-primary { width: 100%; }
+  .chart-body { height: 300px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="header-tag">AI Agent v1.0 · DRAM &amp; HBM Competitive Intelligence</div>
+    <h1>메모리 반도체 기술 경쟁력 분석</h1>
+    <p class="subtitle">SK하이닉스 · 삼성전자 · Micron · CXMT의 최신 기술동향을 웹 검색으로 수집해<br>DRAM 미세공정과 HBM(고대역폭메모리) 경쟁력을 비교 분석합니다.</p>
+  </header>
+
+  <div class="panel" id="apikey-section">
+    <div class="field-label">Anthropic API Key</div>
+    <div class="row">
+      <div class="input-wrap">
+        <span class="pfx">🔑</span>
+        <input type="password" id="api-key-input" placeholder="sk-ant-api03-..." oninput="onKeyInput()" autocomplete="off" spellcheck="false">
+      </div>
+      <button class="btn btn-ghost" onclick="toggleKey()" id="toggle-btn">SHOW</button>
+      <button class="btn btn-ghost" onclick="saveKey()">저장</button>
+    </div>
+    <div class="key-status warn" id="key-status">
+      <span class="dot"></span>
+      <span id="key-status-text">API Key가 입력되지 않았습니다</span>
+    </div>
+    <div class="sec-note">⚠ Key는 브라우저 localStorage에만 저장되며 외부로 전송되지 않습니다.</div>
+  </div>
+
+  <div class="panel">
+    <div class="field-label">분석 대상</div>
+    <div class="players" id="players"></div>
+    <div class="row" style="margin-top:16px">
+      <button class="btn btn-primary" id="run-btn" onclick="runAgent()">▶ 최신 기술동향 분석 시작</button>
+    </div>
+  </div>
+
+  <div id="status-bar"><span class="sdot"></span><span id="status-text">AI Agent 분석 중...</span></div>
+  <div id="error-box"></div>
+
+  <div id="results">
+    <div class="empty">
+      <div class="icon">◈</div>
+      <h3>No Data Loaded</h3>
+      <p>API Key를 입력하고 분석을 시작하면, 4개사의 DRAM 미세공정 및 HBM 세대별 로드맵을 웹 검색 기반으로 비교합니다.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+var COMPANIES = [
+  { name: 'SK하이닉스',   ticker: '000660.KS', color: '#C8A96E' },
+  { name: '삼성전자',     ticker: '005930.KS', color: '#4fd1a0' },
+  { name: 'Micron',       ticker: 'MU.US',     color: '#64a0ff' },
+  { name: 'CXMT',         ticker: '비상장(중국)', color: '#e07060' }
+];
+
+var SCORE_AXES = [
+  { key: 'dramProcess',         label: 'DRAM 미세공정' },
+  { key: 'hbmTech',              label: 'HBM 기술력' },
+  { key: 'yieldCapacity',        label: '양산·수율' },
+  { key: 'customerPartnership',  label: '고객·파트너십' },
+  { key: 'roadmap',              label: '로드맵·확장성' }
+];
+
+var radarChart = null;
+
+document.addEventListener('DOMContentLoaded', function() {
+  loadSavedKey();
+  var wrap = document.getElementById('players');
+  wrap.innerHTML = COMPANIES.map(function(c) {
+    return '<span class="player-chip"><span class="sw" style="background:' + c.color + '"></span>' + c.name + ' <span style="color:#666">· ' + c.ticker + '</span></span>';
+  }).join('');
+});
+
+// ── API Key 관리 ──
+function loadSavedKey() {
+  try {
+    var k = localStorage.getItem('memtech_api_key') || '';
+    if (!k) return;
+    document.getElementById('api-key-input').value = k;
+    setKeyStatus(true);
+  } catch(e) {}
+}
+function saveKey() {
+  var k = document.getElementById('api-key-input').value.trim();
+  if (!k) { alert('API Key를 입력해 주세요.'); return; }
+  if (!k.startsWith('sk-ant-')) { alert('올바른 Anthropic API Key 형식이 아닙니다.'); return; }
+  try { localStorage.setItem('memtech_api_key', k); } catch(e) {}
+  setKeyStatus(true);
+}
+function onKeyInput() {
+  setKeyStatus(document.getElementById('api-key-input').value.trim().startsWith('sk-ant-'));
+}
+function setKeyStatus(ok) {
+  var el = document.getElementById('key-status');
+  var txt = document.getElementById('key-status-text');
+  el.className = 'key-status ' + (ok ? 'ok' : 'warn');
+  txt.textContent = ok ? 'API Key 확인됨 — 분석 준비 완료' : 'API Key가 입력되지 않았습니다';
+}
+function toggleKey() {
+  var inp = document.getElementById('api-key-input');
+  var btn = document.getElementById('toggle-btn');
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+  btn.textContent = inp.type === 'password' ? 'SHOW' : 'HIDE';
+}
+function getApiKey() {
+  var v = document.getElementById('api-key-input').value.trim();
+  if (v) return v;
+  try { return localStorage.getItem('memtech_api_key') || ''; } catch(e) { return ''; }
+}
+
+function setStatus(msg, show) {
+  var bar = document.getElementById('status-bar');
+  document.getElementById('status-text').textContent = msg;
+  bar.style.display = (show === false) ? 'none' : 'block';
+}
+function setError(msg) {
+  var box = document.getElementById('error-box');
+  box.textContent = msg ? '⚠ ' + msg : '';
+  box.style.display = msg ? 'block' : 'none';
+}
+
+async function callAPI(apiKey, system, messages, useSearch, maxTokens) {
+  var body = { model: 'claude-sonnet-4-20250514', max_tokens: maxTokens || 4096, system: system, messages: messages };
+  if (useSearch) body.tools = [{ type: 'web_search_20250305', name: 'web_search', max_uses: 8 }];
+  var res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': apiKey,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true'
+    },
+    body: JSON.stringify(body)
+  });
+  if (!res.ok) {
+    var err = await res.json().catch(function() { return {}; });
+    throw new Error((err.error && err.error.message) || ('API 오류: ' + res.status));
+  }
+  return await res.json();
+}
+
+function extractText(data) {
+  var t = '';
+  for (var i = 0; i < data.content.length; i++) {
+    if (data.content[i].type === 'text') t += data.content[i].text + '\n';
+  }
+  return t;
+}
+
+function extractCitedUrls(data) {
+  var urls = [];
+  (data.content || []).forEach(function(block) {
+    if (block.type === 'web_search_tool_result' && Array.isArray(block.content)) {
+      block.content.forEach(function(r) {
+        if (r.url && urls.indexOf(r.url) === -1) urls.push(r.url);
+      });
+    }
+  });
+  return urls;
+}
+
+function buildResearchPrompt() {
+  var today = new Date();
+  var todayStr = today.getFullYear() + '년 ' + (today.getMonth()+1) + '월 ' + today.getDate() + '일';
+  return '오늘은 ' + todayStr + '이다. 아래 4개 메모리 반도체 기업의 "최신 DRAM 및 HBM(고대역폭메모리) 기술 동향"을 웹 검색으로 조사하라.\n\n' +
+    '대상 기업: SK하이닉스, 삼성전자(메모리사업부), Micron(마이크론), CXMT(长鑫存储, ChangXin Memory Technologies)\n\n' +
+    '각 기업에 대해 다음 항목을 최대한 구체적으로, 최신 뉴스/실적발표/컨퍼런스콜/업계 리포트 기준으로 조사하라:\n' +
+    '1. DRAM 미세공정 로드맵 (예: 1a/1b/1c nm급 공정, EUV 적용 세대, 양산 시점)\n' +
+    '2. HBM 세대별 현황과 로드맵 (HBM3, HBM3E, HBM4, HBM4E 등 개발/양산/공급 상태와 목표 시점)\n' +
+    '3. 주요 고객사 및 공급 계약 (NVIDIA, AMD, 구글, 클라우드업체 등과의 관계)\n' +
+    '4. 생산능력(CAPA) 및 수율 관련 이슈\n' +
+    '5. 최근 3~6개월 내 주요 뉴스 (신제품 발표, 투자, 인력/기술 유출 이슈, 수출규제 영향 등)\n' +
+    '6. 강점과 약점/리스크\n\n' +
+    'CXMT는 중국 국영 성격의 비상장 기업으로 공개 정보가 제한적이니, 알려진 정보와 업계 추정치를 명확히 구분해서 서술하라. ' +
+    '불확실한 내용은 "추정" 또는 "알려지지 않음"으로 명시하라. 한국어로 작성하라.';
+}
+
+function buildStructurePrompt(researchText) {
+  return '다음은 SK하이닉스, 삼성전자, Micron, CXMT의 DRAM/HBM 기술동향 리서치 원문이다. 이를 아래 JSON 스키마로만 변환하라. ' +
+    '설명, 코드블록, 다른 텍스트 없이 순수 JSON 객체 하나만 출력하라.\n\n' +
+    '스키마:\n' +
+    '{\n' +
+    '  "asOf": "기준 시점 (예: 2026년 8월)",\n' +
+    '  "companies": [\n' +
+    '    {\n' +
+    '      "name": "SK하이닉스" | "삼성전자" | "Micron" | "CXMT" (4개 모두 이 순서로 포함),\n' +
+    '      "dramProcess": "DRAM 미세공정 현황 요약 (1~2문장)",\n' +
+    '      "hbmStatus": "HBM 세대/로드맵 현황 요약 (1~2문장)",\n' +
+    '      "customers": "주요 고객/공급 관계 요약",\n' +
+    '      "capacityYield": "생산능력/수율 관련 요약",\n' +
+    '      "recentNews": "최근 주요 뉴스 요약",\n' +
+    '      "strengths": "강점",\n' +
+    '      "risks": "약점/리스크",\n' +
+    '      "scores": { "dramProcess": 1~10 정수, "hbmTech": 1~10 정수, "yieldCapacity": 1~10 정수, "customerPartnership": 1~10 정수, "roadmap": 1~10 정수 }\n' +
+    '    }\n' +
+    '  ],\n' +
+    '  "summary": "4개사 DRAM/HBM 경쟁력을 종합 비교하는 3~5문장 코멘트. 현재 순위와 근거, 향후 변수(HBM4 전환, CXMT 추격 속도, 수출규제 등)를 포함."\n' +
+    '}\n\n' +
+    'scores는 리서치 내용을 근거로 상대평가한 점수이며, 정보가 불확실한 CXMT의 경우도 업계 통념상 합리적인 추정치를 부여하라(모르면 낮은 점수 대신 중간값과 함께 risks/텍스트에 불확실성을 명시).\n\n' +
+    '=== 리서치 원문 ===\n' + researchText.substring(0, 6000);
+}
+
+async function runAgent() {
+  var apiKey = getApiKey();
+  if (!apiKey || !apiKey.startsWith('sk-ant-')) {
+    setError('API Key를 먼저 입력하고 저장해 주세요.');
+    document.getElementById('api-key-input').focus();
+    return;
+  }
+
+  var btn = document.getElementById('run-btn');
+  btn.disabled = true;
+  setError('');
+  if (radarChart) { radarChart.destroy(); radarChart = null; }
+
+  var resultsEl = document.getElementById('results');
+  resultsEl.innerHTML = '<div style="padding:20px 0"><div class="skel" style="width:100%;height:60px;margin-bottom:16px"></div><div class="skel" style="width:100%;height:380px;margin-bottom:16px"></div><div class="skel" style="width:100%;height:200px"></div></div>';
+
+  try {
+    setStatus('4개사 DRAM·HBM 최신 기술동향 웹 검색 중... (약 20~40초 소요)');
+    var researchData = await callAPI(apiKey,
+      '당신은 메모리 반도체(DRAM, HBM) 산업 전문 애널리스트입니다. 웹 검색으로 최신 정보를 수집하고 사실 기반으로 분석합니다.',
+      [{ role: 'user', content: buildResearchPrompt() }],
+      true, 5000);
+
+    var researchText = extractText(researchData);
+    var sourceUrls = extractCitedUrls(researchData);
+    if (!researchText.trim()) throw new Error('검색 결과를 가져오지 못했습니다. 다시 시도해주세요.');
+
+    setStatus('수집한 정보를 경쟁력 비교 데이터로 구조화 중...');
+    var structData = await callAPI(apiKey,
+      '당신은 JSON 변환 도구입니다. 입력된 분석 텍스트를 지정된 JSON 스키마로만 출력하고, 그 외 어떤 텍스트도 출력하지 않습니다.',
+      [{ role: 'user', content: buildStructurePrompt(researchText) }],
+      false, 3000);
+
+    var jsonText = extractText(structData).trim();
+    var s = jsonText.indexOf('{');
+    var e = jsonText.lastIndexOf('}');
+    if (s === -1 || e === -1) throw new Error('JSON을 찾을 수 없습니다. 다시 시도해주세요.');
+    var parsed = JSON.parse(jsonText.substring(s, e + 1));
+
+    setStatus('', false);
+    resultsEl.innerHTML = '';
+    renderAll(parsed, sourceUrls);
+  } catch(err) {
+    setStatus('', false);
+    resultsEl.innerHTML = '<div class="empty"><div class="icon">◈</div><h3>No Data Loaded</h3><p>API Key를 입력하고 분석을 시작하면, 4개사의 DRAM 미세공정 및 HBM 세대별 로드맵을 웹 검색 기반으로 비교합니다.</p></div>';
+    setError('분석 실패: ' + err.message);
+  }
+  btn.disabled = false;
+}
+
+function colorFor(name) {
+  var found = COMPANIES.filter(function(c) { return c.name === name; })[0];
+  return found ? found.color : '#C8A96E';
+}
+
+function hexToRgba(hex, alpha) {
+  var h = hex.replace('#','');
+  var r = parseInt(h.substring(0,2),16), g = parseInt(h.substring(2,4),16), b = parseInt(h.substring(4,6),16);
+  return 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
+}
+
+function renderAll(data, sourceUrls) {
+  var companies = data.companies || [];
+  if (!companies.length) { setError('분석 결과가 비어 있습니다.'); return; }
+  var asOf = data.asOf || new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: 'long' });
+
+  // ── 종합 요약 ──
+  var sumCard = document.createElement('div');
+  sumCard.className = 'card';
+  sumCard.style.animationDelay = '0s';
+  sumCard.innerHTML =
+    '<div class="card-head"><span class="icon">🧭</span><h3>종합 비교 요약</h3><span class="as-of">기준: ' + asOf + '</span></div>' +
+    '<div class="summary-body">' + (data.summary || '-') + '</div>';
+  document.getElementById('results').appendChild(sumCard);
+
+  // ── 레이더 차트 ──
+  var radarCard = document.createElement('div');
+  radarCard.className = 'card';
+  radarCard.style.animationDelay = '0.08s';
+  radarCard.innerHTML =
+    '<div class="card-head"><span class="icon">🎯</span><h3>경쟁력 5축 비교 (1~10점, AI 평가)</h3></div>' +
+    '<div class="chart-body"><canvas id="radar-chart"></canvas></div>';
+  document.getElementById('results').appendChild(radarCard);
+
+  setTimeout(function() {
+    var ctx = document.getElementById('radar-chart').getContext('2d');
+    var datasets = companies.map(function(c) {
+      var color = colorFor(c.name);
+      var scores = c.scores || {};
+      return {
+        label: c.name,
+        data: SCORE_AXES.map(function(ax) { return scores[ax.key] != null ? scores[ax.key] : 0; }),
+        borderColor: color,
+        backgroundColor: hexToRgba(color, 0.12),
+        pointBackgroundColor: color,
+        borderWidth: 2,
+        pointRadius: 3
+      };
+    });
+    radarChart = new Chart(ctx, {
+      type: 'radar',
+      data: { labels: SCORE_AXES.map(function(a){ return a.label; }), datasets: datasets },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          r: {
+            min: 0, max: 10,
+            angleLines: { color: 'rgba(200,169,110,0.1)' },
+            grid: { color: 'rgba(200,169,110,0.1)' },
+            pointLabels: { color: '#ccc', font: { size: 11, family: 'Noto Sans KR' } },
+            ticks: { color: '#666', backdropColor: 'transparent', stepSize: 2, font: { size: 9 } }
+          }
+        },
+        plugins: {
+          legend: { labels: { color: '#aaa', font: { family: 'Noto Sans KR', size: 11 }, boxWidth: 14, padding: 16 } },
+          tooltip: {
+            backgroundColor: '#1a1610', borderColor: 'rgba(200,169,110,0.3)', borderWidth: 1,
+            titleColor: '#fff', bodyColor: '#aaa', padding: 12
+          }
+        }
+      }
+    });
+  }, 60);
+
+  // ── DRAM/HBM 로드맵 비교 테이블 ──
+  var tblCard = document.createElement('div');
+  tblCard.className = 'card';
+  tblCard.style.animationDelay = '0.16s';
+  var thead = '<tr><th>기업</th><th>DRAM 미세공정</th><th>HBM 현황·로드맵</th><th>주요 고객</th><th>생산능력·수율</th></tr>';
+  var tbody = companies.map(function(c) {
+    return '<tr>' +
+      '<td><div class="td-company">' + c.name + '</div><div class="td-ticker">' + (findTicker(c.name)) + '</div></td>' +
+      '<td>' + (c.dramProcess || '-') + '</td>' +
+      '<td>' + (c.hbmStatus || '-') + '</td>' +
+      '<td>' + (c.customers || '-') + '</td>' +
+      '<td>' + (c.capacityYield || '-') + '</td>' +
+    '</tr>';
+  }).join('');
+  tblCard.innerHTML =
+    '<div class="card-head"><span class="icon">📋</span><h3>DRAM · HBM 로드맵 비교</h3></div>' +
+    '<div style="overflow-x:auto"><table class="cmp-table"><thead>' + thead + '</thead><tbody>' + tbody + '</tbody></table></div>';
+  document.getElementById('results').appendChild(tblCard);
+
+  // ── 기업별 상세 카드 ──
+  var grid = document.createElement('div');
+  grid.className = 'grid-2';
+  companies.forEach(function(c, i) {
+    var color = colorFor(c.name);
+    var scores = c.scores || {};
+    var card = document.createElement('div');
+    card.className = 'co-card';
+    card.style.animationDelay = (0.2 + i * 0.08) + 's';
+    var scoreBars = SCORE_AXES.map(function(ax) {
+      var v = scores[ax.key] != null ? scores[ax.key] : 0;
+      return '<div class="score-bar-row">' +
+        '<div class="score-bar-label">' + ax.label + '</div>' +
+        '<div class="score-bar-track"><div class="score-bar-fill" style="width:' + (v*10) + '%;background:' + color + '"></div></div>' +
+        '<div class="score-bar-val">' + v + '</div>' +
+      '</div>';
+    }).join('');
+    card.innerHTML =
+      '<div class="co-title"><span class="sw" style="background:' + color + '"></span><span class="co-name">' + c.name + '</span></div>' +
+      '<div class="co-ticker">' + findTicker(c.name) + '</div>' +
+      '<div class="co-row"><div class="lbl">강점</div><div class="val">' + (c.strengths || '-') + '</div></div>' +
+      '<div class="co-row"><div class="lbl">약점 · 리스크</div><div class="val">' + (c.risks || '-') + '</div></div>' +
+      '<div class="co-row"><div class="lbl">최근 뉴스</div><div class="val">' + (c.recentNews || '-') + '</div></div>' +
+      '<div class="co-row"><div class="lbl">경쟁력 점수</div><div class="score-bars">' + scoreBars + '</div></div>';
+    grid.appendChild(card);
+  });
+  document.getElementById('results').appendChild(grid);
+
+  // ── 출처 ──
+  var srcCard = document.createElement('div');
+  srcCard.className = 'card source-card';
+  srcCard.style.animationDelay = '0.6s';
+  var srcHtml = sourceUrls && sourceUrls.length
+    ? '<div style="font-size:12px;color:#888;line-height:2;word-break:break-all">' +
+        sourceUrls.slice(0, 12).map(function(u) { return '<div>· <a href="' + u + '" target="_blank" style="color:var(--gold);text-decoration:none">' + u + '</a></div>'; }).join('') +
+      '</div>'
+    : '<div style="font-size:12px;color:#666">출처 URL을 확인할 수 없습니다.</div>';
+  srcCard.innerHTML = '<h4>📌 참고 출처 (웹 검색)</h4>' + srcHtml +
+    '<div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--gold-border);font-size:11px;color:#555">' +
+    '⚠ AI가 웹 검색으로 수집·요약한 정보이며 CXMT 등 비공개 기업 데이터는 업계 추정치를 포함합니다. 투자·사업 판단 전 각 사의 공식 IR 자료 및 전문 리서치를 반드시 확인하세요.' +
+    '</div>';
+  document.getElementById('results').appendChild(srcCard);
+}
+
+function findTicker(name) {
+  var f = COMPANIES.filter(function(c) { return c.name === name; })[0];
+  return f ? f.ticker : '';
+}
+</script>
+</body>
+</html>
