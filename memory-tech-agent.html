@@ -270,7 +270,7 @@ function setError(msg) {
 
 async function callAPI(apiKey, system, messages, useSearch, maxTokens) {
   var body = { model: 'claude-sonnet-4-20250514', max_tokens: maxTokens || 4096, system: system, messages: messages };
-  if (useSearch) body.tools = [{ type: 'web_search_20250305', name: 'web_search', max_uses: 8 }];
+  if (useSearch) body.tools = [{ type: 'web_search_20250305', name: 'web_search', max_uses: 16 }];
   var res = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: {
@@ -313,6 +313,11 @@ function buildResearchPrompt() {
   var todayStr = today.getFullYear() + '년 ' + (today.getMonth()+1) + '월 ' + today.getDate() + '일';
   return '오늘은 ' + todayStr + '이다. 아래 4개 메모리 반도체 기업의 "최신 DRAM 및 HBM(고대역폭메모리) 기술 동향"을 웹 검색으로 조사하라.\n\n' +
     '대상 기업: SK하이닉스, 삼성전자(메모리사업부), Micron(마이크론), CXMT(长鑫存储, ChangXin Memory Technologies)\n\n' +
+    '4개 기업 모두 빠짐없이 개별적으로 웹 검색을 수행하라. 특히 CXMT는 영문/한국어 자료가 적으니 아래처럼 여러 번 다른 키워드로 반드시 검색하라:\n' +
+    '  - "CXMT HBM 2026", "ChangXin Memory HBM roadmap", "CXMT DRAM process node 2026"\n' +
+    '  - "长鑫存储 HBM", "长鑫存储 制程" 등 중국어 키워드도 시도\n' +
+    '  - CXMT 관련 반도체 장비 수출규제, 미국 제재 리스트 포함 여부, 국제 학회/특허 발표 동향도 검색\n' +
+    'SK하이닉스·삼성전자·Micron 각각에 대해서도 최소 1회 이상 개별 검색을 수행하라.\n\n' +
     '각 기업에 대해 다음 항목을 최대한 구체적으로, 최신 뉴스/실적발표/컨퍼런스콜/업계 리포트 기준으로 조사하라:\n' +
     '1. DRAM 미세공정 로드맵 (예: 1a/1b/1c nm급 공정, EUV 적용 세대, 양산 시점)\n' +
     '2. HBM 세대별 현황과 로드맵 (HBM3, HBM3E, HBM4, HBM4E 등 개발/양산/공급 상태와 목표 시점)\n' +
@@ -320,8 +325,8 @@ function buildResearchPrompt() {
     '4. 생산능력(CAPA) 및 수율 관련 이슈\n' +
     '5. 최근 3~6개월 내 주요 뉴스 (신제품 발표, 투자, 인력/기술 유출 이슈, 수출규제 영향 등)\n' +
     '6. 강점과 약점/리스크\n\n' +
-    'CXMT는 중국 국영 성격의 비상장 기업으로 공개 정보가 제한적이니, 알려진 정보와 업계 추정치를 명확히 구분해서 서술하라. ' +
-    '불확실한 내용은 "추정" 또는 "알려지지 않음"으로 명시하라. 한국어로 작성하라.';
+    'CXMT는 중국 국영 성격의 비상장 기업으로 공개 정보가 제한적이니, 검색으로 찾은 사실과 업계 추정치를 명확히 구분해서 서술하라. ' +
+    '검색을 여러 번 시도했는데도 근거를 찾지 못한 항목은 추측하지 말고 "확인된 정보 없음"으로 명시하라. 한국어로 작성하라.';
 }
 
 function buildStructurePrompt(researchText) {
@@ -366,11 +371,11 @@ async function runAgent() {
   resultsEl.innerHTML = '<div style="padding:20px 0"><div class="skel" style="width:100%;height:60px;margin-bottom:16px"></div><div class="skel" style="width:100%;height:380px;margin-bottom:16px"></div><div class="skel" style="width:100%;height:200px"></div></div>';
 
   try {
-    setStatus('4개사 DRAM·HBM 최신 기술동향 웹 검색 중... (약 20~40초 소요)');
+    setStatus('4개사(SK하이닉스·삼성전자·Micron·CXMT) DRAM·HBM 최신 기술동향 웹 검색 중... (CXMT는 다회 검색, 약 30~60초 소요)');
     var researchData = await callAPI(apiKey,
-      '당신은 메모리 반도체(DRAM, HBM) 산업 전문 애널리스트입니다. 웹 검색으로 최신 정보를 수집하고 사실 기반으로 분석합니다.',
+      '당신은 메모리 반도체(DRAM, HBM) 산업 전문 애널리스트입니다. 웹 검색으로 최신 정보를 수집하고 사실 기반으로 분석합니다. CXMT처럼 공개 정보가 적은 기업은 다양한 키워드(영문/중문 포함)로 여러 번 검색을 시도합니다.',
       [{ role: 'user', content: buildResearchPrompt() }],
-      true, 5000);
+      true, 7000);
 
     var researchText = extractText(researchData);
     var sourceUrls = extractCitedUrls(researchData);
